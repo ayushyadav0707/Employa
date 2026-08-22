@@ -30,6 +30,7 @@ model User {
   avatar         String?   // From main
   salary         Float?    @default(50000) // From main
   panNo          String?   // From main
+  uanNo          String?   // Missing from main
   bankAccount    String?   // From main
   status         String    @default("PENDING")
   adminNotes     String?       
@@ -37,6 +38,46 @@ model User {
   // Auth logic flags
   isFirstLogin   Boolean   @default(true) // Forces password reset on first login
 
+  // Relations
+  payrollConfig  PayrollConfig?
+  leaveRequests  LeaveRequest[] @relation("UserLeaveRequests")
+  leaveBalance   LeaveBalance?
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
+}
+
+model PayrollConfig {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
+  salary    Int
+  taxPct    Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LeaveRequest {
+  id             String   @id @default(cuid())
+  user           User     @relation("UserLeaveRequests", fields: [userId], references: [id])
+  userId         String
+  type           String
+  startDate      DateTime
+  endDate        DateTime
+  allocationDays Int
+  reason         String
+  status         String
+  attachmentUrl  String?
+  adminComment   String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model LeaveBalance {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  paidTimeOff Int      @default(24)
+  sickTimeOff Int      @default(7)
+  updatedAt   DateTime @updatedAt
 }
