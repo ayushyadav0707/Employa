@@ -7,12 +7,14 @@ interface LeaveApplicationModalProps {
   onClose: () => void;
   onSubmit: (data: any) => void;
   isSubmitting: boolean;
+  currentUser?: any;
 }
 
 export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
   onClose,
   onSubmit,
   isSubmitting,
+  currentUser,
 }) => {
   const [formData, setFormData] = useState({
     type: 'Paid Time off',
@@ -63,7 +65,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
     if (e.target.files && e.target.files[0]) {
       setFormData({
         ...formData,
-        attachmentUrl: e.target.files[0].name, // Simulate URL with name for mock
+        attachmentUrl: e.target.files[0].name, // Using actual filename
       });
     }
   };
@@ -90,8 +92,8 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             </label>
             <input
               type="text"
-              className="px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-100 dark:bg-zinc-900 text-gray-500 cursor-not-allowed text-sm"
-              value="EMP001 (John Doe)"
+              className="px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-100 dark:bg-zinc-900 text-gray-500 cursor-not-allowed text-sm font-semibold"
+              value={currentUser ? `${currentUser.loginId} (${currentUser.name})` : 'Loading...'}
               disabled
             />
           </div>

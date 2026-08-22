@@ -9,6 +9,7 @@ interface TimeOffClientProps {
   initialBalance: { paidTimeOff: number; sickTimeOff: number };
   initialRequests: any[];
   userId: string;
+  currentUser?: any;
 }
 
 export const TimeOffClient: React.FC<TimeOffClientProps> = ({
@@ -16,6 +17,7 @@ export const TimeOffClient: React.FC<TimeOffClientProps> = ({
   initialBalance,
   initialRequests,
   userId,
+  currentUser,
 }) => {
   return (
     <div className="flex flex-col gap-6">
@@ -30,6 +32,7 @@ export const TimeOffClient: React.FC<TimeOffClientProps> = ({
           balance={initialBalance}
           requests={initialRequests}
           userId={userId}
+          currentUser={currentUser}
         />
       ) : (
         <AdminLeaveApproval
