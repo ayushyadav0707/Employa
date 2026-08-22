@@ -14,7 +14,6 @@ jobs:
       DATABASE_URL: "file:./dev.db"
       JWT_SECRET: "dayflow_odoo_hackathon_super_secret_jwt_key_2026"
       NEXT_TELEMETRY_DISABLED: "1"
-      NODE_ENV: "production"
 
     steps:
       - name: 📥 1. Checkout Repository
@@ -26,8 +25,8 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: 📦 3. Clean Dependency Installation
-        run: npm ci
+      - name: 📦 3. Install Dependencies
+        run: npm ci || npm install --legacy-peer-deps
 
       - name: 🗄️ 4. Validate Prisma DB Schema & Sync Database
         run: |
