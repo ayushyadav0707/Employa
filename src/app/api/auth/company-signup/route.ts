@@ -4,8 +4,6 @@ import { hashPassword } from '@/lib/auth';
 import crypto from 'crypto';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     const { companyName, name, email, phone, password } = await req.json();
@@ -58,6 +56,7 @@ export async function POST(req: Request) {
     
     // REAL EMAIL INTEGRATION (RESEND)
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_123456789') {
+      const resend = new Resend(process.env.RESEND_API_KEY);
       const { data, error: resendError } = await resend.emails.send({
         from: 'Dayflow <onboarding@resend.dev>',
         to: [email],
