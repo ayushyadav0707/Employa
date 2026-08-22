@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Link from "next/link";
-import { LayoutDashboard, Users, UserCircle, Calendar, DollarSign } from "lucide-react";
+import { LayoutDashboard, Users, UserCircle, Calendar, DollarSign, Clock, UserPlus } from "lucide-react";
 import AvatarDropdown from "@/components/profile/AvatarDropdown";
 import StrictSessionGuard from "@/components/auth/StrictSessionGuard";
 
@@ -36,6 +36,10 @@ export default function RootLayout({
               <Users className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
               Employees
             </Link>
+            <Link href="/attendance" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
+              <Clock className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
+              Attendance
+            </Link>
             <Link href="/profile" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
               <UserCircle className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
               My Profile
@@ -47,6 +51,10 @@ export default function RootLayout({
             <Link href="/payroll" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
               <DollarSign className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
               Payroll
+            </Link>
+            <Link href="/dashboard/employees/create" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
+              <UserPlus className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
+              Register Employee
             </Link>
           </nav>
         </aside>
