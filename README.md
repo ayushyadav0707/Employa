@@ -20,7 +20,7 @@
 
 ## 📌 Executive Summary
 
-**Dayflow HRMS** is an integrated human resource management platform designed following strict Odoo ERP workflow standards. It delivers a unified workplace experience spanning multi-role authentication, interactive employee directories, a real-time stopwatch attendance engine, leave approval matrices, and salary structure configurations with automated payslip generation.
+**Employa HRMS** is an integrated human resource management platform designed following strict Odoo ERP workflow standards. It delivers a unified workplace experience spanning multi-role authentication, interactive employee directories, a real-time stopwatch attendance engine, leave approval matrices, and salary structure configurations with automated payslip generation.
 
 ---
 
