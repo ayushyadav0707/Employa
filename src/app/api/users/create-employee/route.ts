@@ -90,7 +90,7 @@ export async function POST(req: Request) {
             <p><strong>Your Login ID:</strong> ${user.loginId}</p>
             <p><strong>Your Temporary Password:</strong> ${tempPassword}</p>
             <br/>
-            <p>Please log in at <a href="http://localhost:3000/login">http://localhost:3000/login</a>.</p>
+            <p>Please log in at <a href="${process.env.NEXT_PUBLIC_APP_URL}/login">${process.env.NEXT_PUBLIC_APP_URL}/login</a>.</p>
             <p><em>Note: You will be required to change your password immediately upon your first login.</em></p>
           `
         });
