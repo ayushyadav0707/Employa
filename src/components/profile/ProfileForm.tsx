@@ -38,7 +38,7 @@ export default function ProfileForm({ user, isAdmin = false }: { user?: any, isA
         // Create
         const res = await createEmployee(formData);
         if (res.success) {
-          setSuccessMessage(`Employee created! ID: ${res.employee?.employeeId} | Password: ${res.password}`);
+          setSuccessMessage(`Employee created! ID: ${res.employee?.loginId} | Password: ${res.password}`);
           setIsEditing(false);
         }
       }
@@ -66,7 +66,7 @@ export default function ProfileForm({ user, isAdmin = false }: { user?: any, isA
           <div>
             <h2 className="text-xl font-bold text-gray-900">{user?.name || 'New Employee'}</h2>
             <p className="text-sm text-gray-500">{user?.jobTitle || 'No Title'} • {user?.department || 'No Department'}</p>
-            {user?.employeeId && <span className="inline-block mt-1 px-2.5 py-0.5 bg-gray-100 text-xs font-medium text-gray-600 rounded-full">ID: {user.employeeId}</span>}
+            {user?.loginId && <span className="inline-block mt-1 px-2.5 py-0.5 bg-gray-100 text-xs font-medium text-gray-600 rounded-full">ID: {user.loginId}</span>}
             {!user && <span className="inline-block mt-1 px-2.5 py-0.5 bg-amber-100 text-xs font-medium text-amber-800 rounded-full">ID & Password will be auto-generated</span>}
           </div>
         </div>
