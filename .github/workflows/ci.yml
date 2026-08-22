@@ -10,10 +10,22 @@ jobs:
   compliance-and-quality-checks:
     name: Lint, Type Check, Database & Build Validation
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     env:
-      DATABASE_URL: "file:./dev.db"
-      POSTGRES_PRISMA_URL: "file:./dev.db"
-      POSTGRES_URL_NON_POOLING: "file:./dev.db"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/test?schema=public"
+      POSTGRES_PRISMA_URL: "postgresql://postgres:postgres@localhost:5432/test?schema=public"
+      POSTGRES_URL_NON_POOLING: "postgresql://postgres:postgres@localhost:5432/test?schema=public"
       JWT_SECRET: "dayflow_odoo_hackathon_super_secret_jwt_key_2026"
       NEXT_TELEMETRY_DISABLED: "1"
 
