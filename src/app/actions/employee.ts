@@ -30,14 +30,14 @@ export async function createEmployee(formData: FormData) {
     // Get count for sequence
     const currentYearEmployees = await prisma.user.count({
       where: {
-        employeeId: {
+        loginId: {
           startsWith: prefix
         }
       }
     });
     
     const seq = String(currentYearEmployees + 1).padStart(4, '0');
-    const employeeId = `${prefix}${seq}`;
+    const loginId = `${prefix}${seq}`;
 
     // Auto-generate initial password
     const password = generatePassword();
@@ -53,10 +53,9 @@ export async function createEmployee(formData: FormData) {
         jobTitle,
         department,
         salary,
-        employeeId,
-        loginId: employeeId,
+        loginId,
         password, // In real app, hash this with bcrypt
-        role: 'Employee'
+        role: 'EMPLOYEE'
       }
     });
 

@@ -8,7 +8,7 @@ export default async function DashboardPage() {
     select: {
       id: true,
       name: true,
-      employeeId: true,
+      loginId: true,
       jobTitle: true,
       department: true,
       profilePicture: true,
