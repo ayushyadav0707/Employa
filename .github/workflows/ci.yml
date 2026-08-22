@@ -2,7 +2,7 @@ name: Dayflow HRMS — Strict Odoo Compliance CI/CD Pipeline
 
 on:
   push:
-    branches: [ main, dev, feature/* ]
+    branches: [ main, dev, "feature/**", "Attendance-**", "Leave-**", "Employee**" ]
   pull_request:
     branches: [ main, dev ]
 
@@ -10,11 +10,17 @@ jobs:
   compliance-and-quality-checks:
     name: Lint, Type Check, Database & Build Validation
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "file:./dev.db"
+      JWT_SECRET: "dayflow_odoo_hackathon_super_secret_jwt_key_2026"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_ENV: "production"
+
     steps:
       - name: 📥 1. Checkout Repository
         uses: actions/checkout@v4
 
-      - name: ⚙️ 2. Setup Node.js 20 Environment
+      - name: ⚙️ 2. Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -23,24 +29,20 @@ jobs:
       - name: 📦 3. Clean Dependency Installation
         run: npm ci
 
-      - name: 🗄️ 4. Validate Prisma DB Schema & Client Generation
+      - name: 🗄️ 4. Validate Prisma DB Schema & Sync Database
         run: |
           npx prisma validate
           npx prisma generate
-        env:
-          DATABASE_URL: "file:./dev.db"
+          npx prisma db push --skip-generate
 
-      - name: 🎨 5. Verify Tailwind CSS & ESLint Syntax Rules
+      - name: 🎨 5. Verify ESLint Syntax Rules
         run: npm run lint
 
-      - name: 🏷️ 6. Strict TypeScript Type Check (No Implicit Any)
+      - name: 🏷️ 6. Strict TypeScript Type Check
         run: npx tsc --noEmit
 
-      - name: 🧪 7. Run Workflow & Security Tests
-        run: npm test || echo "Tests running..."
+      - name: 🧪 7. Run Security & Test Suite
+        run: npm test
 
       - name: 🏗️ 8. Execute Production Next.js Build Check
         run: npm run build
-        env:
-          DATABASE_URL: "file:./dev.db"
-          JWT_SECRET: "dayflow_odoo_hackathon_super_secret_jwt_key_2026"
