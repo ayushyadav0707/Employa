@@ -44,7 +44,7 @@ export default async function EmployeesPage() {
               No employees found. Add one to get started.
             </div>
           ) : (
-            employees.map((emp: { id: string; name: string; profilePicture?: string | null; jobTitle?: string | null; employeeId?: string }) => {
+            employees.map((emp: { id: string; name: string; profilePicture?: string | null; jobTitle?: string | null; employeeId?: string | null }) => {
               // Mocking status logic for demonstration. In real app, join with Attendance/Leave tables.
               const mockStatuses = ['present', 'absent', 'leave'];
               const status = mockStatuses[emp.id.length % 3]; // Deterministic mock
