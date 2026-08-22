@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ Dayflow HRMS
+# ⚡ Employa
 ### *Every workday, perfectly aligned.*
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
@@ -287,7 +287,7 @@ Every Pull Request and commit is tested through our strict 6-stage GitHub Action
    ```bash
    npm run dev
    ```
-   Open **[http://localhost:3000](http://localhost:3000)** in your browser!
+   Open **(https://employa-hrms.vercel.app/)** in your browser!
 
 ---
 
