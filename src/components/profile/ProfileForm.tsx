@@ -121,27 +121,27 @@ export default function ProfileForm({ user, isAdmin = false }: { user?: any, isA
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                  <input type="text" name="name" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.name} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="text" name="name" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.name} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                  <input type="email" name="email" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.email} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="email" name="email" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.email} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                  <input type="tel" name="phone" disabled={!isEditing} defaultValue={user?.phone} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="tel" name="phone" disabled={!isEditing} defaultValue={user?.phone} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                  <input type="text" name="address" disabled={!isEditing} defaultValue={user?.address} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="text" name="address" disabled={!isEditing} defaultValue={user?.address} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">PAN No</label>
-                  <input type="text" name="panNo" disabled={!isEditing} defaultValue={user?.panNo} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="text" name="panNo" disabled={!isEditing} defaultValue={user?.panNo} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">UAN No</label>
-                  <input type="text" name="uanNo" disabled={!isEditing} defaultValue={user?.uanNo} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500" />
+                  <input type="text" name="uanNo" disabled={!isEditing} defaultValue={user?.uanNo} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white" />
                 </div>
               </div>
 
@@ -151,11 +151,11 @@ export default function ProfileForm({ user, isAdmin = false }: { user?: any, isA
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
-                  <input type="text" name="jobTitle" disabled={!isEditing || !isAdmin} defaultValue={user?.jobTitle} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm disabled:bg-gray-50" />
+                  <input type="text" name="jobTitle" disabled={!isEditing || !isAdmin} defaultValue={user?.jobTitle} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm disabled:bg-gray-50 text-gray-900 bg-white" />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                  <input type="text" name="department" disabled={!isEditing || !isAdmin} defaultValue={user?.department} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm disabled:bg-gray-50" />
+                  <input type="text" name="department" disabled={!isEditing || !isAdmin} defaultValue={user?.department} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm disabled:bg-gray-50 text-gray-900 bg-white" />
                 </div>
               </div>
             </div>
