@@ -9,7 +9,8 @@ datasource db {
 
 model User {
   id             String    @id @default(cuid())
-  loginId        String    @unique // Format: OIJODO20260001
+  employeeId     String    @unique @default(cuid()) // From main
+  loginId        String    @unique // Format: OIJODO20260001 (From Auth)
   email          String    @unique
   emailVerified  DateTime?
   verifyToken    String?   @unique
@@ -19,53 +20,23 @@ model User {
   // Profile Information
   companyName    String?   // Mostly relevant for the HR Admin registration
   companyLogo    String?   // Matches the wireframe logo upload
-  jobTitle       String?
-  department     String?
-  documents      String?   // Store document URLs as JSON or CSV string
   name           String
   phone          String?
   address        String?
   profilePicture String?
-  salary         Float?
+  jobTitle       String?
+  department     String?
+  designation    String?   // From main
+  avatar         String?   // From main
+  salary         Float?    @default(50000) // From main
+  panNo          String?   // From main
+  bankAccount    String?   // From main
+  status         String    @default("PENDING")
+  adminNotes     String?       
   
-  // Auth Gates
-  isFirstLogin   Boolean   @default(true)
-  
-  // Relations
-  attendances    Attendance[]
-  leaveRequests  LeaveRequest[]
-  
+  // Auth logic flags
+  isFirstLogin   Boolean   @default(true) // Forces password reset on first login
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
-}
-
-model Attendance {
-  id          String           @id @default(cuid())
-  userId      String           
-  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  date        DateTime         
-  checkIn     DateTime?
-  checkOut    DateTime?
-  status      String           @default("PRESENT")
-  
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-
-  @@unique([userId, date])     
-}
-
-model LeaveRequest {
-  id          String        @id @default(cuid())
-  userId      String
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type        String
-  startDate   DateTime
-  endDate     DateTime
-  remarks     String?
-  status      String        @default("PENDING")
-  adminNotes  String?       
-  
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
 }

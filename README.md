@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dayflow - Human Resource Management System
 
-## Getting Started
+*Every workday, perfectly aligned.*
 
-First, run the development server:
+Dayflow is a modern, full-stack Human Resource Management System (HRMS) designed to digitize and streamline core HR operations. Built with a focus on usability and role-based access, Dayflow simplifies employee onboarding, profile management, attendance tracking, leave management, and payroll visibility.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Tech Stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Database**: SQLite (via `better-sqlite3`)
+- **ORM**: [Prisma](https://www.prisma.io/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ✨ Key Features
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Role-Based Access Control**: Distinct views and permissions for Employees and Admins/HR Officers.
+- **Smart Onboarding**: Automated generation of standardized Employee IDs (e.g., `OIJODO20220001`) and temporary passwords during HR registration.
+- **Employee Directory & Profiles**: Comprehensive employee cards, detailed profile tabs (Private, Resume, Salary), and dynamic frontend salary component calculations.
+- **Dynamic Dashboards**: 
+  - *Employees*: Quick-access navigation cards and recent activity alerts.
+  - *Admins*: High-level performance metrics, leave approvals, and quick-switch employee search.
+- **Attendance & Time-Off** *(In Development)*: Daily/weekly attendance views, check-in/check-out systray, and leave request/approval workflows.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚦 Getting Started
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
 
-## Deploy on Vercel
+### Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone the repository:**
+   ```bash
+   git clone <repository-url>
+   cd Odoo
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+3. **Set up the database:**
+   Ensure your `.env` file is configured with the correct database URL, then run:
+   ```bash
+   npx prisma db push
+   npx prisma generate
+   ```
+
+4. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+   
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+## 📜 Database Schema Summary
+
+The core data is driven by the `User` model, which handles both authentication and employee records. Key fields include:
+- standard fields: `id`, `name`, `email`, `password`, `role` (Admin/Employee)
+- Employee specific: `employeeId`, `phone`, `address`, `department`, `jobTitle`, `profilePicture`, `panNo`, `uanNo`, `dateOfJoining`, `dateOfBirth`
+- Payroll specific: `basicSalary`
+
+*(Additional models for Attendance and Leaves will be managed by Dev 3 & 4).*
+
+---
+*Built as part of a collaborative HRMS engineering project.*
