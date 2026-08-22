@@ -54,6 +54,7 @@ export async function createEmployee(formData: FormData) {
         department,
         salary,
         employeeId,
+        loginId: employeeId,
         password, // In real app, hash this with bcrypt
         role: 'Employee'
       }
