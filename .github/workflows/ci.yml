@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: "file:./dev.db"
+      POSTGRES_PRISMA_URL: "file:./dev.db"
+      POSTGRES_URL_NON_POOLING: "file:./dev.db"
       JWT_SECRET: "dayflow_odoo_hackathon_super_secret_jwt_key_2026"
       NEXT_TELEMETRY_DISABLED: "1"
 
