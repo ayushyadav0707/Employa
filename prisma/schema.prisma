@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String    @id @default(cuid())
+  loginId        String    @unique // Format: OIJODO20260001
+  email          String    @unique
+  emailVerified  DateTime?
+  verifyToken    String?   @unique
+  password       String
+  role           String    @default("EMPLOYEE")
+  
+  // Profile Information
+  companyName    String?   // Mostly relevant for the HR Admin registration
+  companyLogo    String?   // Matches the wireframe logo upload
+  jobTitle       String?
+  department     String?
+  documents      String?   // Store document URLs as JSON or CSV string
+  name           String
+  phone          String?
+  address        String?
+  profilePicture String?
+  salary         Float?
+  
+  // Auth Gates
+  isFirstLogin   Boolean   @default(true)
+  
+  // Relations
+  attendances    Attendance[]
+  leaveRequests  LeaveRequest[]
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Attendance {
+  id          String           @id @default(cuid())
+  userId      String           
+  user        User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  date        DateTime         
+  checkIn     DateTime?
+  checkOut    DateTime?
+  status      String           @default("PRESENT")
+  
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@unique([userId, date])     
+}
+
+model LeaveRequest {
+  id          String        @id @default(cuid())
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        String
+  startDate   DateTime
+  endDate     DateTime
+  remarks     String?
+  status      String        @default("PENDING")
+  adminNotes  String?       
+  
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
