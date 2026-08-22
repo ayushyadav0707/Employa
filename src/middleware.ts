@@ -8,7 +8,6 @@ const publicRoutes = [
   '/login', 
   '/api/auth/company-signup', 
   '/api/auth/login', 
-  '/api/auth/logout',
   '/api/auth/verify'
 ];
 

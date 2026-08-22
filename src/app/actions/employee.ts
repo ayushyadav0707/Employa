@@ -2,9 +2,6 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import bcrypt from 'bcryptjs';
-
-import { getSession } from '@/lib/auth';
 
 function generatePassword() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
@@ -13,10 +10,6 @@ function generatePassword() {
 
 export async function createEmployee(formData: FormData) {
   try {
-    const session = await getSession();
-    if (!session || session.role !== 'ADMIN') {
-      return { success: false, error: 'Unauthorized: Admin access required.' };
-    }
     const name = formData.get('name') as string;
     const email = formData.get('email') as string;
     const phone = formData.get('phone') as string;
@@ -46,9 +39,8 @@ export async function createEmployee(formData: FormData) {
     const seq = String(currentYearEmployees + 1).padStart(4, '0');
     const loginId = `${prefix}${seq}`;
 
-    // Auto-generate initial password and hash it
-    const rawPassword = generatePassword();
-    const password = await bcrypt.hash(rawPassword, 10);
+    // Auto-generate initial password
+    const password = generatePassword();
 
     const newEmployee = await prisma.user.create({
       data: {
@@ -62,17 +54,13 @@ export async function createEmployee(formData: FormData) {
         department,
         salary,
         loginId,
-        password, // Hashed with bcrypt
-        role: 'EMPLOYEE',
-        emailVerified: new Date(), // Auto-verify so they can login
-        isFirstLogin: true, // Force password reset on first login
-        leaveBalance: { create: { paidTimeOff: 24, sickTimeOff: 7 } },
-        payrollConfig: { create: { salary, taxPct: 10 } },
+        password, // In real app, hash this with bcrypt
+        role: 'EMPLOYEE'
       }
     });
 
     revalidatePath('/employees');
-    return { success: true, employee: newEmployee, password: rawPassword };
+    return { success: true, employee: newEmployee, password };
   } catch (error) {
     console.error('Failed to create employee', error);
     return { success: false, error: 'Failed to create employee' };
@@ -81,16 +69,6 @@ export async function createEmployee(formData: FormData) {
 
 export async function updateEmployee(id: string, formData: FormData) {
   try {
-    const session = await getSession();
-    if (!session) {
-      return { success: false, error: 'Unauthorized' };
-    }
-    
-    // Only Admin can update other users' profiles
-    if (session.role !== 'ADMIN' && session.id !== id) {
-      return { success: false, error: 'Unauthorized: Cannot update another user\'s profile.' };
-    }
-
     const data: any = {
       name: formData.get('name') as string,
       email: formData.get('email') as string,
@@ -102,14 +80,7 @@ export async function updateEmployee(id: string, formData: FormData) {
       department: formData.get('department') as string,
     };
 
-    if (formData.has('profilePicture')) {
-      const pic = formData.get('profilePicture') as string;
-      if (pic && pic.trim() !== '') {
-        data.profilePicture = pic;
-      }
-    }
-
-    if (formData.has('salary') && session.role === 'ADMIN') {
+    if (formData.has('salary')) {
       data.salary = Number(formData.get('salary'));
     }
 

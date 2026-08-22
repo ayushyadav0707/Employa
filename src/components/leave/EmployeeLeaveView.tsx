@@ -8,14 +8,12 @@ interface EmployeeLeaveViewProps {
   balance: { paidTimeOff: number; sickTimeOff: number };
   requests: any[];
   userId: string;
-  currentUser?: any;
 }
 
 export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
   balance,
   requests,
   userId,
-  currentUser,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -175,7 +173,6 @@ export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
           onClose={() => setIsModalOpen(false)}
           onSubmit={handleApply}
           isSubmitting={isSubmitting}
-          currentUser={currentUser}
         />
       )}
     </div>

@@ -109,10 +109,10 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
                 <tr key={req.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {req.user?.name ?? req.userId}
+                      John Doe
                     </div>
                     <div className="text-xs text-gray-500 dark:text-zinc-400">
-                      {req.user?.loginId ?? req.userId}
+                      {req.userId}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 dark:text-zinc-300">
