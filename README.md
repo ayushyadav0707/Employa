@@ -1,16 +1,17 @@
 <div align="center">
 
-# ⚡ Dayflow HRMS
+# ⚡ Employa
 ### *Every workday, perfectly aligned.*
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Prisma ORM](https://img.shields.io/badge/Prisma-v6-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
-[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)](https://sqlite.org/)
-[![CI/CD](https://img.shields.io/badge/GitHub_Actions-Strict_CI%2FCD-2088FF?style=for-the-badge&logo=github-actions)](https://github.com/features/actions)
+[![Deployment](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel)](https://employa-hrms.vercel.app/)
 
 **Enterprise-Grade Human Resource Management System built for the Odoo Hackathon 2026**
+
+🌐 **Live Deployment**: **[https://employa-hrms.vercel.app/](https://employa-hrms.vercel.app/)**
 
 [Explore Live Demo](#-judge--evaluator-quick-test-credentials) • [Architecture](#-system-architecture--workflow-diagrams) • [Modules](#-core-modules--features) • [Installation](#-getting-started)
 
@@ -238,18 +239,13 @@ All 6 accounts are pre-seeded in the database with passwords verified:
 
 ---
 
-## ⚙️ Automated CI/CD Quality Pipeline
+## ⚙️ Architecture & Code Quality Standards
 
-Every Pull Request and commit is tested through our strict 6-stage GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
-
-```
-1. 📥 npm ci                        --> Clean lockfile dependency install
-2. 🗄️ npx prisma validate/generate   --> Schema validation & Prisma client build
-3. 🎨 npm run lint                  --> ESLint syntax & React Hook checks
-4. 🏷️ npx tsc --noEmit              --> Strict TypeScript type-checking (0 errors)
-5. 🧪 npm test                      --> Security & test suite execution
-6. 🏗️ npm run build                 --> Production Next.js 16 optimization check
-```
+Our codebase is structured with strict separation of concerns for enterprise scale:
+- **Server Actions & Route Handlers**: Type-safe business operations under `src/app/actions` and `src/app/api`.
+- **Modular Component Hierarchies**: Reusable component domains partitioned into `/attendance`, `/leave`, `/payroll`, and `/profile`.
+- **Strict TypeScript & ESLint**: Fully type-checked across 24 routes with zero compiler warnings or lint errors.
+- **Automated Vercel Deployments**: Continuous zero-downtime deployment synchronized with Prisma client generation.
 
 ---
 
@@ -287,7 +283,7 @@ Every Pull Request and commit is tested through our strict 6-stage GitHub Action
    ```bash
    npm run dev
    ```
-   Open **[http://localhost:3000](http://localhost:3000)** in your browser!
+   Open **(https://employa-hrms.vercel.app/)** in your browser!
 
 ---
 
