@@ -31,6 +31,8 @@ model User {
   attendances    Attendance[]
   leaveRequests  LeaveRequest[]
   payrolls       Payroll[]
+  leaveBalance   LeaveBalance?
+  payrollConfig  PayrollConfig?
 }
 
 model Attendance {
@@ -52,20 +54,44 @@ model Attendance {
 }
 
 model LeaveRequest {
-  id         String   @id @default(cuid())
-  userId     String?
-  employeeId String?
-  type       String
-  startDate  String
-  endDate    String
-  reason     String?
-  remarks    String?
-  status     String   @default("Pending")
-  comments   String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String?
+  employeeId     String?
+  type           String
+  startDate      String
+  endDate        String
+  allocationDays Int      @default(0)
+  reason         String?
+  remarks        String?
+  status         String   @default("Pending")
+  comments       String?
+  adminComment   String?
+  attachmentUrl  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model LeaveBalance {
+  id          Int    @id @default(autoincrement())
+  userId      String @unique
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  paidTimeOff Float  @default(24)
+  sickTimeOff Float  @default(7)
+}
+
+model PayrollConfig {
+  id                   Int    @id @default(autoincrement())
+  userId               String @unique
+  user                 User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  basicSalaryPercent   Float  @default(50)
+  hraPercent           Float  @default(50)
+  standardAllowPercent Float  @default(16.67)
+  perfBonusPercent     Float  @default(8.33)
+  travelAllowPercent   Float  @default(8.333)
+  pfPercent            Float  @default(12)
+  profTax              Float  @default(200)
 }
 
 model Payroll {
