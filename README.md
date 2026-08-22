@@ -8,7 +8,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Prisma ORM](https://img.shields.io/badge/Prisma-v6-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
 [![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)](https://sqlite.org/)
-[![Status](https://img.shields.io/badge/Build-Passing-22C55E?style=for-the-badge)](https://github.com/ayushyadav0707/Odoo-2026)
+[![CI/CD](https://img.shields.io/badge/GitHub_Actions-Strict_CI%2FCD-2088FF?style=for-the-badge&logo=github-actions)](https://github.com/features/actions)
 
 **Enterprise-Grade Human Resource Management System built for the Odoo Hackathon 2026**
 
@@ -235,6 +235,21 @@ All 6 accounts are pre-seeded in the database with passwords verified:
 | **EMPLOYEE** | **Sarah Jenkins** | `OISJEN20260003` | `sarah@dayflow.com` | `Employee123!` | Profile Statutory PAN/UAN |
 | **EMPLOYEE** | **Alex Rivera** | `OIARIV20260004` | `alex@dayflow.com` | `Employee123!` | Pending 3-Day Leave Request |
 | **EMPLOYEE** | **Priya Sharma** | `OIPSHA20260005` | `priya@dayflow.com` | `Employee123!` | Half-day punch & Timesheet |
+
+---
+
+## ⚙️ Automated CI/CD Quality Pipeline
+
+Every Pull Request and commit is tested through our strict 6-stage GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
+
+```
+1. 📥 npm ci                        --> Clean lockfile dependency install
+2. 🗄️ npx prisma validate/generate   --> Schema validation & Prisma client build
+3. 🎨 npm run lint                  --> ESLint syntax & React Hook checks
+4. 🏷️ npx tsc --noEmit              --> Strict TypeScript type-checking (0 errors)
+5. 🧪 npm test                      --> Security & test suite execution
+6. 🏗️ npm run build                 --> Production Next.js 16 optimization check
+```
 
 ---
 
