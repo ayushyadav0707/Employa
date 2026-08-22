@@ -1,64 +1,86 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
-}
-
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model User {
-  id             String      @id @default(uuid())
-  employeeId     String      @unique
+  id             String         @id @default(cuid())
+  employeeId     String         @unique
   name           String
-  email          String      @unique
+  email          String         @unique
   password       String
-  role           String      @default("Employee") // "Employee" or "Admin"
+  role           String         @default("Employee")
   phone          String?
   address        String?
   profilePicture String?
   jobTitle       String?
   department     String?
-  salary         Float?
+  designation    String?
+  avatar         String?
+  salary         Float?         @default(50000)
   panNo          String?
   uanNo          String?
-  documents      String?     
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
+  documents      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   attendances    Attendance[]
   leaveRequests  LeaveRequest[]
+  payrolls       Payroll[]
 }
 
 model Attendance {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date      DateTime
-  checkIn   DateTime?
-  checkOut  DateTime?
-  status    String   
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id                   String   @id @default(cuid())
+  userId               String?
+  employeeId           String?
+  date                 String
+  checkIn              String?
+  checkOut             String?
+  totalHours           Float    @default(0)
+  status               String   @default("Present")
+  location             String?  @default("HQ - Floor 3")
+  remarks              String?
+  breakDurationMinutes Int      @default(0)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
-  @@unique([userId, date])
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model LeaveRequest {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  type      String   
-  startDate DateTime
-  endDate   DateTime
-  remarks   String?
-  status    String   @default("Pending") 
-  comments  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(cuid())
+  userId     String?
+  employeeId String?
+  type       String
+  startDate  String
+  endDate    String
+  reason     String?
+  remarks    String?
+  status     String   @default("Pending")
+  comments   String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Payroll {
+  id         String   @id @default(cuid())
+  userId     String?
+  employeeId String?
+  month      String
+  baseSalary Float
+  bonus      Float    @default(0)
+  deductions Float    @default(0)
+  netSalary  Float
+  status     String   @default("Paid")
+  payslipUrl String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
