@@ -36,38 +36,38 @@ export default async function AppLayout({
       <StrictSessionGuard />
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex z-20 shadow-sm">
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-indigo-600 tracking-tight">Employa.</h1>
+        <div className="h-20 flex items-center px-8 border-b border-gray-100">
+          <h1 className="text-[26px] font-bold text-indigo-600 tracking-tight">Employa</h1>
         </div>
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          <Link href="/dashboard" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-            <LayoutDashboard className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+        <nav className="flex-1 overflow-y-auto py-8 px-8 space-y-6">
+          <Link href="/dashboard" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+            <LayoutDashboard strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             Dashboard
           </Link>
-          <Link href="/employees" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-            <Users className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+          <Link href="/employees" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+            <Users strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             Directory
           </Link>
-          <Link href="/attendance" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-            <Clock className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+          <Link href="/attendance" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+            <Clock strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             Attendance
           </Link>
-          <Link href="/profile" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-            <UserCircle className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+          <Link href="/profile" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+            <UserCircle strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             My Profile
           </Link>
-          <Link href="/time-off" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-            <Calendar className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+          <Link href="/time-off" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+            <Calendar strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
             Time Off
           </Link>
           {isAdmin && (
             <>
-              <Link href="/payroll" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-                <DollarSign className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              <Link href="/payroll" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+                <DollarSign strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
                 Payroll Config
               </Link>
-              <Link href="/employees/new" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 group transition-all">
-                <UserPlus className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              <Link href="/employees/new" className="flex items-center text-[15px] font-medium text-slate-700 hover:text-indigo-600 group transition-all">
+                <UserPlus strokeWidth={1.5} className="mr-4 h-6 w-6 text-slate-400 group-hover:text-indigo-600 transition-colors" />
                 Register Employee
               </Link>
             </>
