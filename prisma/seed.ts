@@ -150,70 +150,24 @@ async function main() {
   const emilyId = createdUsers['OIEMZH20260001'];
   const priyaId = createdUsers['OIPSHA20260005'];
 
-  const adminId = createdUsers['DAYFLOWMASTER01'];
-  const allUserIds = [adminId, johnId, sarahId, alexId, emilyId, priyaId];
-  let generatedAttendances = [];
-  
-  // Generate attendance from August 1 to August 22, 2026
-  for (let day = 1; day <= 22; day++) {
-    const dateStr = `2026-08-${day.toString().padStart(2, '0')}`;
-    const d = new Date(dateStr);
-    const dayOfWeek = d.getDay(); // 0 = Sunday, 6 = Saturday
+  const sampleAttendances = [
+    { userId: johnId, date: '2026-08-22', checkIn: '09:02 AM', checkOut: null, totalHours: 0, status: 'Present', location: 'HQ - Floor 3', remarks: 'Checked in on time' },
+    { userId: sarahId, date: '2026-08-22', checkIn: '08:45 AM', checkOut: null, totalHours: 0, status: 'Present', location: 'HQ - Design Lab', remarks: 'Early arrival' },
+    { userId: alexId, date: '2026-08-22', checkIn: '09:15 AM', checkOut: null, totalHours: 0, status: 'Present', location: 'Remote (Home Office)', remarks: 'Work from home' },
+    { userId: emilyId, date: '2026-08-22', checkIn: '09:00 AM', checkOut: null, totalHours: 0, status: 'Present', location: 'HQ - HR Suite' },
+    { userId: priyaId, date: '2026-08-22', checkIn: '10:30 AM', checkOut: null, totalHours: 0, status: 'Half-day', location: 'HQ - Floor 2', remarks: 'Doctor appointment' },
 
-    for (const uId of allUserIds) {
-      if (dayOfWeek === 0 || dayOfWeek === 6) {
-        continue; // Skip weekends
-      }
+    { userId: johnId, date: '2026-08-21', checkIn: '08:58 AM', checkOut: '05:30 PM', totalHours: 8.5, status: 'Present', location: 'HQ - Floor 3', breakDurationMinutes: 45 },
+    { userId: johnId, date: '2026-08-20', checkIn: '09:05 AM', checkOut: '05:15 PM', totalHours: 8.2, status: 'Present', location: 'HQ - Floor 3', breakDurationMinutes: 50 },
+    { userId: johnId, date: '2026-08-19', checkIn: '09:12 AM', checkOut: '01:30 PM', totalHours: 4.3, status: 'Half-day', location: 'HQ - Floor 3', remarks: 'Personal commitment afternoon' },
+    { userId: johnId, date: '2026-08-18', checkIn: '08:50 AM', checkOut: '06:00 PM', totalHours: 9.1, status: 'Present', location: 'Remote (Home Office)', breakDurationMinutes: 40 },
+    { userId: johnId, date: '2026-08-17', checkIn: '09:00 AM', checkOut: '05:00 PM', totalHours: 8.0, status: 'Present', location: 'HQ - Floor 3', breakDurationMinutes: 60 },
+  ];
 
-      // Add some randomness
-      const rand = Math.random();
-      let status = 'Present';
-      let checkIn: string | null = '09:00 AM';
-      let checkOut: string | null = '05:30 PM';
-      let totalHours = 8.5;
-      let remarks: string | null = null;
-
-      if (rand > 0.9) {
-        status = 'Absent';
-        checkIn = null;
-        checkOut = null;
-        totalHours = 0;
-        remarks = 'Unplanned absence';
-      } else if (rand > 0.8) {
-        status = 'Half-day';
-        checkIn = '09:00 AM';
-        checkOut = '01:00 PM';
-        totalHours = 4.0;
-        remarks = 'Doctor appointment';
-      } else if (rand > 0.7) {
-        checkIn = '09:30 AM';
-        totalHours = 8.0;
-        remarks = 'Late arrival';
-      }
-
-      // On Aug 22 (today), some people haven't checked out yet
-      if (day === 22 && status === 'Present') {
-        checkOut = null;
-        totalHours = 0; // Not checked out
-      }
-
-      generatedAttendances.push({
-        userId: uId,
-        date: dateStr,
-        checkIn,
-        checkOut,
-        totalHours,
-        status,
-        location: uId === alexId ? 'Remote (Home Office)' : 'HQ - Floor 3',
-        remarks
-      });
-    }
-  }
-
-  for (const att of generatedAttendances) {
+  for (const att of sampleAttendances) {
     await prisma.attendance.create({ data: att });
   }
-  console.log(`✅ Seeded ${generatedAttendances.length} sample attendance logs across the month.`);
+  console.log(`✅ Seeded ${sampleAttendances.length} sample attendance logs.`);
 
   await prisma.leaveRequest.create({
     data: {
@@ -254,45 +208,6 @@ async function main() {
   });
 
   console.log('✅ Seeded 3 sample leave requests (1 Pending, 1 Approved, 1 Rejected).');
-
-  // Seed Events
-  await prisma.event.createMany({
-    data: [
-      { title: 'Employee Birthday', description: 'Rahim Uddin', type: 'Birthday', eventDate: new Date(), timeString: '10:30 AM' },
-      { title: 'Work Anniversary', description: 'Sumaiya Akter', type: 'Anniversary', eventDate: new Date(), timeString: '11:00 AM' },
-      { title: 'Payroll Processing', description: 'May 2026 Payroll', type: 'Payroll', eventDate: new Date(), timeString: '02:00 PM' },
-      { title: 'Training Program', description: 'Leadership Training', type: 'Training', eventDate: new Date(), timeString: '03:30 PM' },
-    ]
-  });
-  console.log('✅ Seeded 4 sample Events.');
-
-  // Seed Tasks
-  await prisma.task.createMany({
-    data: [
-      { userId: createdUsers['DAYFLOWMASTER01'], title: 'Review Leave Requests', category: 'Leave Management', priority: 'High', dueDate: new Date('2026-08-25'), status: 'In Progress' },
-      { userId: createdUsers['DAYFLOWMASTER01'], title: 'Payroll Verification', category: 'Payroll', priority: 'Medium', dueDate: new Date('2026-08-26'), status: 'Pending' },
-      { userId: createdUsers['DAYFLOWMASTER01'], title: 'Interview Schedule', category: 'Recruitment', priority: 'Medium', dueDate: new Date('2026-08-27'), status: 'In Progress' },
-      
-      { userId: johnId, title: 'Submit Weekly Report', category: 'Operations', priority: 'High', dueDate: new Date('2026-08-23'), status: 'In Progress' },
-      { userId: johnId, title: 'Update Profile Details', category: 'HR', priority: 'Medium', dueDate: new Date('2026-08-25'), status: 'Pending' },
-      
-      { userId: sarahId, title: 'Complete Compliance Course', category: 'Training', priority: 'High', dueDate: new Date('2026-08-30'), status: 'Not Started' },
-    ]
-  });
-  console.log('✅ Seeded 6 sample Tasks.');
-
-  // Seed ActivityLogs
-  await prisma.activityLog.createMany({
-    data: [
-      { userId: johnId, message: 'You checked in successfully.', type: 'Success', icon: 'Check', createdAt: new Date(Date.now() - 1000 * 60 * 2) }, // 2 min ago
-      { userId: sarahId, message: 'Your leave request was approved.', type: 'Success', icon: 'Check', createdAt: new Date(Date.now() - 1000 * 60 * 15) }, // 15 min ago
-      { userId: adminId, message: 'New employee Rakib Hasan has been added.', type: 'Info', icon: 'User', createdAt: new Date(Date.now() - 1000 * 60 * 2) },
-      { userId: adminId, message: 'Leave request submitted by Sumaiya Akter.', type: 'Info', icon: 'File', createdAt: new Date(Date.now() - 1000 * 60 * 15) },
-      { userId: adminId, message: 'Payroll for August 2026 has been completed.', type: 'Success', icon: 'DollarSign', createdAt: new Date(Date.now() - 1000 * 60 * 60) }, // 1 hour ago
-      { userId: johnId, message: 'August 2026 Payslip is available.', type: 'Info', icon: 'DollarSign', createdAt: new Date(Date.now() - 1000 * 60 * 60) }, // 1 hour ago
-    ]
-  });
-  console.log('✅ Seeded 6 sample ActivityLogs.');
 }
 
 main()

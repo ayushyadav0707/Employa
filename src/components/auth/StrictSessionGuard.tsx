@@ -1,8 +1,27 @@
 'use client';
 
-// This is a no-op component. The logout-on-refresh behavior was causing users
-// to be logged out every time they refreshed the page, which is incorrect.
-// Session persistence is handled by the HttpOnly cookie with a 7-day expiry.
+import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+
 export default function StrictSessionGuard() {
-  return null;
+  const pathname = usePathname();
+
+  useEffect(() => {
+    // Only apply this strict guard if the user is in the protected dashboard area
+    if (!pathname.startsWith('/dashboard')) return;
+
+    const handleBeforeUnload = () => {
+      // sendBeacon fires a POST request that is guaranteed to complete 
+      // even while the browser is destroying the page during a refresh (F5) or tab close.
+      navigator.sendBeacon('/api/auth/logout');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [pathname]);
+
+  return null; // This is a silent background component
 }
