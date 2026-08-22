@@ -4,8 +4,6 @@ import { hashPassword, getSession } from '@/lib/auth';
 import crypto from 'crypto';
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     // 1. EXPLICIT ROLE GATE
@@ -81,6 +79,7 @@ export async function POST(req: Request) {
     // 5. SEND REAL EMAIL VIA RESEND
     if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== 're_123456789') {
       try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
         await resend.emails.send({
           from: 'Dayflow HR <onboarding@resend.dev>',
           to: [email],
