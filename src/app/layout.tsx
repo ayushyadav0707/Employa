@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LayoutDashboard, Users, UserCircle, Calendar, DollarSign, UserPlus } from "lucide-react";
 import AvatarDropdown from "@/components/profile/AvatarDropdown";
 import StrictSessionGuard from "@/components/auth/StrictSessionGuard";
+import { getSession } from "@/lib/auth";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -13,11 +14,14 @@ export const metadata: Metadata = {
   description: "Every workday, perfectly aligned.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
+  const isAdmin = session?.role === 'ADMIN' || session?.role === 'HR';
+
   return (
     <html lang="en">
       <body className={`${inter.className} bg-gray-50 text-gray-900 antialiased flex h-screen overflow-hidden`}>
@@ -48,10 +52,12 @@ export default function RootLayout({
               <DollarSign className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
               Payroll
             </Link>
-            <Link href="/dashboard/employees/create" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
-              <UserPlus className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
-              Register Employee
-            </Link>
+            {isAdmin && (
+              <Link href="/dashboard/employees/create" className="flex items-center px-3 py-2.5 text-sm font-medium rounded-lg text-gray-700 hover:text-indigo-600 hover:bg-gray-50 group transition-all">
+                <UserPlus className="mr-3 h-5 w-5 text-gray-400 group-hover:text-indigo-600" />
+                Register Employee
+              </Link>
+            )}
           </nav>
         </aside>
 
