@@ -7,7 +7,7 @@ import { Resend } from 'resend';
 export async function POST(req: Request) {
   try {
     const { companyName, name, email, phone, password } = await req.json();
-    console.log("PAYLOAD:", { companyName, name, email, phone, password });
+    console.log("PAYLOAD:", { companyName, name, email, phone, password: '[REDACTED]' });
     
     if (typeof password === 'string' && password.includes(' ')) {
       return NextResponse.json({ error: 'Password cannot contain spaces' }, { status: 400 });
