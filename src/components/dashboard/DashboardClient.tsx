@@ -261,7 +261,7 @@ export default function DashboardClient({
 
               // Build SVG Path
               // viewBox is 0 0 100 100. Y is inverted (0 is top, 100 is bottom)
-              const pathPoints = points.map((p, idx) => {
+              const pathPoints = points.map((p: number, idx: number) => {
                 const x = (idx / 5) * 100;
                 const y = 100 - p; // Invert Y
                 return `${x},${y}`;
