@@ -106,6 +106,32 @@ async function main() {
       update: emp,
       create: emp
     });
+
+    // Dev 4: Create default LeaveBalance and PayrollConfig
+    await prisma.leaveBalance.upsert({
+      where: { userId: emp.id },
+      update: {},
+      create: {
+        userId: emp.id,
+        paidTimeOff: 24,
+        sickTimeOff: 7
+      }
+    });
+
+    await prisma.payrollConfig.upsert({
+      where: { userId: emp.id },
+      update: {},
+      create: {
+        userId: emp.id,
+        basicSalaryPercent: 50,
+        hraPercent: 50,
+        standardAllowPercent: 16.67,
+        perfBonusPercent: 8.33,
+        travelAllowPercent: 8.333,
+        pfPercent: 12,
+        profTax: 200
+      }
+    });
   }
   console.log(`Seeded ${EMPLOYEES.length} users.`);
 
