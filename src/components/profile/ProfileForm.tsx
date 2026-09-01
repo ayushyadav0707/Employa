@@ -362,17 +362,49 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance, isOwn
                     </div>
                   ) : (
                     isAdmin && (
-                      <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100 mb-6">
-                         <h4 className="text-sm font-bold text-amber-900 mb-4">Regenerate Temporary Password</h4>
-                         <p className="text-sm text-amber-800 mb-4">This will immediately revoke their current password and generate a new temporary 24-hour password. The user will be forced to change it upon next login.</p>
-                         <button 
-                           type="button" 
-                           onClick={handleRegeneratePassword} 
-                           disabled={isSubmitting}
-                           className="px-6 py-2.5 bg-white border border-amber-200 rounded-xl text-sm font-semibold text-amber-700 hover:border-amber-300 shadow-sm transition-all disabled:opacity-50"
-                         >
-                           {isSubmitting ? 'Regenerating...' : 'Regenerate Password'}
-                         </button>
+                      <div className="space-y-6">
+                        <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100">
+                          <h4 className="text-sm font-bold text-amber-900 mb-4">Regenerate Temporary Password</h4>
+                          <p className="text-sm text-amber-800 mb-4">This will immediately revoke their current password and generate a new temporary 24-hour password. The user will be forced to change it upon next login.</p>
+                          <button 
+                            type="button" 
+                            onClick={handleRegeneratePassword} 
+                            disabled={isSubmitting}
+                            className="px-6 py-2.5 bg-white border border-amber-200 rounded-xl text-sm font-semibold text-amber-700 hover:border-amber-300 shadow-sm transition-all disabled:opacity-50"
+                          >
+                            {isSubmitting ? 'Regenerating...' : 'Regenerate Password'}
+                          </button>
+                        </div>
+                        
+                        <div className="bg-red-50/50 p-6 rounded-2xl border border-red-100">
+                          <h4 className="text-sm font-bold text-red-900 mb-4">Danger Zone: Terminate Employee</h4>
+                          <p className="text-sm text-red-800 mb-4">Terminating this employee will immediately revoke their login access and hide them from active directory views. Their historical records (attendance, payroll, tasks) will be safely preserved.</p>
+                          <button 
+                            type="button" 
+                            onClick={async () => {
+                              if (confirm('Are you sure you want to terminate this employee? This will revoke their access immediately.')) {
+                                setIsSubmitting(true);
+                                try {
+                                  const { deleteEmployee } = await import('@/app/actions/employee');
+                                  const res = await deleteEmployee(user.id);
+                                  if (res.success) {
+                                    window.location.href = '/employees';
+                                  } else {
+                                    setErrorMessage(res.error || 'Failed to terminate employee.');
+                                    setIsSubmitting(false);
+                                  }
+                                } catch (e) {
+                                  setErrorMessage('An error occurred.');
+                                  setIsSubmitting(false);
+                                }
+                              }
+                            }} 
+                            disabled={isSubmitting}
+                            className="px-6 py-2.5 bg-red-600 border border-transparent rounded-xl text-sm font-semibold text-white hover:bg-red-700 shadow-sm transition-all disabled:opacity-50"
+                          >
+                            {isSubmitting ? 'Processing...' : 'Terminate Employee'}
+                          </button>
+                        </div>
                       </div>
                     )
                   )}
