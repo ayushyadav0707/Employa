@@ -33,15 +33,28 @@ export async function POST(req: Request) {
 
     const isValid = await comparePassword(password, user.password);
     if (!isValid) {
+      // Log failed attempt
       await prisma.activityLog.create({
         data: {
           userId: user.id,
-          message: `Failed login attempt (invalid password).`,
+          message: 'Failed Login (Wrong Password)',
           type: 'Warning',
-          icon: 'AlertTriangle'
+          icon: 'Lock'
         }
       });
       return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
+    }
+
+    if (user.status === 'TERMINATED') {
+      await prisma.activityLog.create({
+        data: {
+          userId: user.id,
+          message: 'Failed Login (Account Terminated)',
+          type: 'Warning',
+          icon: 'UserX'
+        }
+      });
+      return NextResponse.json({ error: 'Account has been terminated.' }, { status: 403 });
     }
 
     // ENFORCE TEMP PASSWORD EXPIRY

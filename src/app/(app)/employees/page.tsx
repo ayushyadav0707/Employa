@@ -13,7 +13,10 @@ export default async function EmployeesPage() {
   const today = getTodayDateString();
 
   const employees = await prisma.user.findMany({
-    where: { companyName: session.companyName },
+    where: { 
+      companyName: session.companyName,
+      status: { not: 'TERMINATED' }
+    },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,

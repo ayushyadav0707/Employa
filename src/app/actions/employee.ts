@@ -27,14 +27,15 @@ export async function createEmployee(formData: FormData) {
     const department = formData.get('department') as string;
     const salary = Number(formData.get('salary')) || 0;
 
-    // Login ID Generation Logic: [OI][First 2 Name + First 2 Last Name][Year][Seq]
+    // Login ID Generation Logic: TA[YYYY][FirstInit][LastInit][Seq]
     const year = new Date().getFullYear();
     const parts = name.trim().split(' ');
-    const first = parts[0] || 'XX';
-    const last = parts.length > 1 ? parts[parts.length - 1] : 'XX';
-    const prefix = `OI${first.substring(0,2).toUpperCase()}${last.substring(0,2).toUpperCase()}${year}`;
+    const firstInit = parts[0] ? parts[0].charAt(0).toUpperCase() : 'X';
+    const lastInit = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : 'X';
+    const prefix = `TA${year}${firstInit}${lastInit}`;
 
     // Get the most recent employee with this prefix to determine the next sequence
+    // It remains company-scoped to prevent tracking total count across tenants and avoid collisions
     const lastEmployee = await prisma.user.findFirst({
       where: {
         companyName: session.companyName,
@@ -59,7 +60,7 @@ export async function createEmployee(formData: FormData) {
       }
     }
     
-    const seq = String(nextSeqNum).padStart(4, '0');
+    const seq = String(nextSeqNum).padStart(3, '0');
     const loginId = `${prefix}${seq}`;
 
     // Auto-generate initial password and hash it
@@ -228,5 +229,41 @@ export async function resetEmployeePassword(id: string) {
   } catch (error) {
     console.error('Failed to reset employee password', error);
     return { success: false, error: 'Failed to reset password' };
+  }
+}
+
+export async function deleteEmployee(id: string) {
+  try {
+    const session = await getSession();
+    if (!session || session.role !== 'ADMIN') {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const employee = await prisma.user.findUnique({
+      where: { id, companyName: session.companyName }
+    });
+
+    if (!employee) return { success: false, error: 'Employee not found.' };
+
+    // Soft delete: keep historical records intact
+    await prisma.user.update({
+      where: { id },
+      data: { status: 'TERMINATED' }
+    });
+
+    await prisma.activityLog.create({
+      data: {
+        userId: session.id,
+        message: `Terminated employee: ${employee.name} (${employee.loginId}).`,
+        type: 'Warning',
+        icon: 'UserX'
+      }
+    });
+
+    revalidatePath('/employees');
+    return { success: true };
+  } catch (error) {
+    console.error('Failed to delete employee', error);
+    return { success: false, error: 'Failed to delete employee' };
   }
 }
