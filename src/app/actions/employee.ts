@@ -204,7 +204,7 @@ export async function resetEmployeePassword(id: string) {
     if (!employee) return { success: false, error: 'Employee not found.' };
 
     const rawPassword = generatePassword();
-    const hashedPassword = await hashPassword(rawPassword);
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
 
     await prisma.user.update({
       where: { id },
