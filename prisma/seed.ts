@@ -115,8 +115,10 @@ async function main() {
 
   for (const p of personas) {
     const hashedPassword = await bcrypt.hash(p.password, 10);
-    const user = await prisma.user.create({
-      data: {
+    const user = await prisma.user.upsert({
+      where: { loginId: p.loginId },
+      update: {},
+      create: {
         loginId: p.loginId,
         email: p.email,
         password: hashedPassword,

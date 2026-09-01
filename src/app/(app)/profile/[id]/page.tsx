@@ -40,7 +40,7 @@ export default async function EmployeeProfilePage({ params }: { params: Promise<
         <p className="text-gray-500">{user.jobTitle} • {user.department}</p>
       </div>
       
-      <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} />
+      <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} isOwnProfile={session.id === user.id} />
     </div>
   );
 }

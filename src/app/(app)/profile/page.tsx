@@ -25,7 +25,7 @@ export default async function MyProfilePage() {
         <p className="text-gray-500">Manage your personal information and view your job details.</p>
       </div>
       
-      <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} />
+      <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} isOwnProfile={true} />
     </div>
   );
 }

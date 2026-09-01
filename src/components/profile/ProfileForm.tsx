@@ -2,23 +2,24 @@
 
 import { useState } from 'react';
 import { User, Mail, Phone, MapPin, Briefcase, Building, DollarSign, FileText, FileSpreadsheet, Lock } from 'lucide-react';
-import { createEmployee, updateEmployee } from '@/app/actions/employee';
+import { createEmployee, updateEmployee, resetEmployeePassword } from '@/app/actions/employee';
 
-export default function ProfileForm({ user, isAdmin = false, leaveBalance }: { 
+export default function ProfileForm({ user, isAdmin = false, leaveBalance, isOwnProfile = true }: { 
   user?: any, 
   isAdmin?: boolean,
-  leaveBalance?: { paidTimeOff: number; sickTimeOff: number } | null
+  leaveBalance?: { paidTimeOff: number; sickTimeOff: number } | null,
+  isOwnProfile?: boolean
 }) {
   const [isEditing, setIsEditing] = useState(!user);
-  const [activeTab, setActiveTab] = useState<'private' | 'resume' | 'salary'>('private');
+  const [activeTab, setActiveTab] = useState<'private' | 'resume' | 'security' | 'salary'>('private');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [profilePicture, setProfilePicture] = useState(user?.profilePicture || '');
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Convert to base64 for local storage without a dedicated blob server
       const reader = new FileReader();
       reader.onloadend = () => {
         setProfilePicture(reader.result as string);
@@ -39,28 +40,66 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance }: {
   const pf = basic * 0.12;
   const pt = 200;
   
-  // Calculate total additions before fixed allowance
   const totalCalculated = basic + hra + stdAllowance + perfBonus + lta;
   const isDeficit = wage > 0 && totalCalculated > wage;
   const fixedAllowance = Math.max(0, wage - totalCalculated);
 
+  async function handleRegeneratePassword() {
+    if (!user?.id || !isAdmin) return;
+    setIsSubmitting(true);
+    setSuccessMessage('');
+    setErrorMessage('');
+    try {
+      const res = await resetEmployeePassword(user.id);
+      if (res.success) {
+        setSuccessMessage(`Temporary password regenerated: ${res.password}`);
+      } else {
+        setErrorMessage(res.error || 'Failed to regenerate password.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   async function handleSubmit(formData: FormData) {
     setIsSubmitting(true);
     setSuccessMessage('');
+    setErrorMessage('');
     try {
+      if (activeTab === 'security') {
+        // Change password logic requires a dynamic import to avoid breaking client boundaries with the new server action
+        const { changePassword } = await import('@/app/actions/security');
+        const res = await changePassword(formData);
+        if (res.success) {
+          setSuccessMessage('Password changed! Please log in again.');
+          // Redirect to login after a brief delay
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 2000);
+        } else {
+          setErrorMessage(res.error || 'Password change failed');
+        }
+        return;
+      }
+
       if (user?.id) {
         // Update
         const res = await updateEmployee(user.id, formData);
         if (res.success) {
           setSuccessMessage('Profile updated successfully!');
           setIsEditing(false);
+        } else {
+          setErrorMessage(res.error || 'Update failed');
         }
       } else {
         // Create
         const res = await createEmployee(formData);
         if (res.success) {
-          setSuccessMessage(`Employee created! ID: ${res.employee?.loginId} | Password: ${res.password}`);
+          const emailMsg = res.emailSent ? 'Email sent!' : 'Email failed (give password manually).';
+          setSuccessMessage(`Employee created! ID: ${res.employee?.loginId} | Pass: ${res.password} | ${emailMsg}`);
           setIsEditing(false);
+        } else {
+          setErrorMessage(res.error || 'Creation failed');
         }
       }
     } finally {
@@ -73,6 +112,11 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance }: {
       {successMessage && (
         <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg font-medium z-50 animate-in slide-in-from-right">
           {successMessage}
+        </div>
+      )}
+      {errorMessage && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-xl shadow-lg font-medium z-50 animate-in slide-in-from-right">
+          {errorMessage}
         </div>
       )}
       
@@ -182,6 +226,16 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance }: {
               Resume
               {activeTab === 'resume' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></span>}
             </button>
+            {user && (
+              <button 
+                type="button"
+                onClick={() => setActiveTab('security')}
+                className={`pb-4 text-sm font-bold tracking-tight transition-all relative ${activeTab === 'security' ? 'text-indigo-600' : 'text-gray-400 hover:text-gray-600'}`}
+              >
+                Security
+                {activeTab === 'security' && <span className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-600 rounded-t-full"></span>}
+              </button>
+            )}
             {isAdmin && (
               <button 
                 type="button"
@@ -276,6 +330,52 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance }: {
                     <p className="text-sm text-gray-500 mb-6">PDF, DOCX up to 5MB</p>
                     <button type="button" className="px-6 py-2.5 bg-white border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:border-indigo-300 shadow-sm transition-all">Select File</button>
                   </div>
+                </div>
+              )}
+
+              {/* SECURITY TAB */}
+              {activeTab === 'security' && user && (
+                <div className="animate-in fade-in duration-500">
+                  <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-lg font-bold text-gray-900 tracking-tight flex items-center">
+                      <Lock className="w-5 h-5 mr-2 text-indigo-500" /> Security Settings
+                    </h3>
+                  </div>
+                  
+                  {isOwnProfile ? (
+                    <div className="bg-gray-50/50 p-6 rounded-2xl border border-gray-100 mb-6">
+                      <h4 className="text-sm font-bold text-gray-900 mb-4">Change Password</h4>
+                      <div className="space-y-5 max-w-md">
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Current Password</label>
+                          <input type="password" name="currentPassword" required className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">New Password</label>
+                          <input type="password" name="newPassword" required minLength={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white outline-none" />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Confirm New Password</label>
+                          <input type="password" name="confirmPassword" required minLength={6} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white outline-none" />
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    isAdmin && (
+                      <div className="bg-amber-50/50 p-6 rounded-2xl border border-amber-100 mb-6">
+                         <h4 className="text-sm font-bold text-amber-900 mb-4">Regenerate Temporary Password</h4>
+                         <p className="text-sm text-amber-800 mb-4">This will immediately revoke their current password and generate a new temporary 24-hour password. The user will be forced to change it upon next login.</p>
+                         <button 
+                           type="button" 
+                           onClick={handleRegeneratePassword} 
+                           disabled={isSubmitting}
+                           className="px-6 py-2.5 bg-white border border-amber-200 rounded-xl text-sm font-semibold text-amber-700 hover:border-amber-300 shadow-sm transition-all disabled:opacity-50"
+                         >
+                           {isSubmitting ? 'Regenerating...' : 'Regenerate Password'}
+                         </button>
+                      </div>
+                    )
+                  )}
                 </div>
               )}
 
@@ -431,6 +531,17 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance }: {
                     className="px-8 py-3 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-md transition-all disabled:opacity-50"
                   >
                     {isSubmitting ? 'Saving...' : 'Save Profile Changes'}
+                  </button>
+                </div>
+              )}
+              {activeTab === 'security' && isOwnProfile && (
+                <div className="flex justify-end pt-8 border-t border-gray-100">
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="px-8 py-3 text-sm font-bold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-md transition-all disabled:opacity-50"
+                  >
+                    {isSubmitting ? 'Updating...' : 'Update Password'}
                   </button>
                 </div>
               )}

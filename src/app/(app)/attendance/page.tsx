@@ -22,6 +22,7 @@ export default async function AttendancePage() {
   if (isAdmin) {
     // Admin: Fetch all employees with today's attendance
     const usersWithTodayAttendance = await prisma.user.findMany({
+      where: { companyName: session.companyName },
       select: {
         id: true,
         name: true,
@@ -39,7 +40,10 @@ export default async function AttendancePage() {
 
     // All attendance records this month for stats
     const allMonthRecords = await prisma.attendance.findMany({
-      where: { date: { startsWith: monthPrefix } },
+      where: { 
+        date: { startsWith: monthPrefix },
+        user: { companyName: session.companyName }
+      },
       include: {
         user: {
           select: { name: true, loginId: true, department: true }

@@ -16,6 +16,7 @@ export default async function DashboardPage() {
 
   // 1. Fetch Users
   const employees = await prisma.user.findMany({
+    where: { companyName: session.companyName },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,
@@ -29,14 +30,14 @@ export default async function DashboardPage() {
     }
   });
 
-  // 2. Fetch Tasks (Admin sees all Admin tasks, Employee sees their own tasks)
+  // 2. Fetch Tasks (Admin sees all Admin tasks for company, Employee sees their own tasks)
   const tasks = await prisma.task.findMany({
-    where: isAdmin ? { user: { role: 'ADMIN' } } : { userId: session.id },
+    where: isAdmin ? { user: { role: 'ADMIN', companyName: session.companyName } } : { userId: session.id },
     orderBy: { dueDate: 'asc' },
     take: 5
   });
 
-  // 3. Fetch Events (All users see today's/upcoming events)
+  // 3. Fetch Events (All users see today's/upcoming events - NOTE: Events are global as they have no relations)
   const events = await prisma.event.findMany({
     orderBy: { eventDate: 'asc' },
     take: 5
@@ -44,7 +45,7 @@ export default async function DashboardPage() {
 
   // 4. Fetch Activity Logs
   const activities = await prisma.activityLog.findMany({
-    where: isAdmin ? undefined : { userId: session.id },
+    where: isAdmin ? { user: { companyName: session.companyName } } : { userId: session.id },
     orderBy: { createdAt: 'desc' },
     take: 5,
     include: {
@@ -63,7 +64,10 @@ export default async function DashboardPage() {
 
   if (isAdmin) {
     const todayAttendances = await prisma.attendance.findMany({
-      where: { date: today }
+      where: { 
+        date: today,
+        user: { companyName: session.companyName }
+      }
     });
     
     const present = todayAttendances.filter(a => a.status === 'Present').length;

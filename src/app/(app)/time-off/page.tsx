@@ -23,7 +23,7 @@ export default async function TimeOffPage() {
 
   // Admin sees all requests; employee sees only their own
   const requests = await prisma.leaveRequest.findMany({
-    where: isAdmin ? undefined : { userId },
+    where: isAdmin ? { user: { companyName: session.companyName } } : { userId },
     orderBy: { startDate: 'desc' },
     include: {
       user: {

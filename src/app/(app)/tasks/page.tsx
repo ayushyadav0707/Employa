@@ -8,7 +8,7 @@ export default async function TasksPage() {
   const isAdmin = session.role === "ADMIN";
   
   const tasks = await prisma.task.findMany({
-    where: isAdmin ? { user: { role: 'ADMIN' } } : { userId: session.id },
+    where: isAdmin ? { user: { role: 'ADMIN', companyName: session.companyName } } : { userId: session.id },
     orderBy: { dueDate: 'asc' },
   });
 
