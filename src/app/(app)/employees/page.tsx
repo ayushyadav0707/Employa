@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import EmployeesClient from "./EmployeesClient";
+import { getSession } from "@/lib/auth";
 
 function getTodayDateString() {
   const today = new Date();
@@ -7,9 +8,12 @@ function getTodayDateString() {
 }
 
 export default async function EmployeesPage() {
+  const session = await getSession();
+  if (!session) return null;
   const today = getTodayDateString();
 
   const employees = await prisma.user.findMany({
+    where: { companyName: session.companyName },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,

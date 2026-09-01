@@ -8,7 +8,7 @@ export default async function ActivityPage() {
   const isAdmin = session.role === "ADMIN";
 
   const activities = await prisma.activityLog.findMany({
-    where: isAdmin ? undefined : { userId: session.id },
+    where: isAdmin ? { user: { companyName: session.companyName } } : { userId: session.id },
     orderBy: { createdAt: 'desc' },
     include: {
       user: {

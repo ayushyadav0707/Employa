@@ -22,6 +22,7 @@ export default async function PayrollPage() {
   let allUsers = null;
   if (isAdmin) {
     allUsers = await prisma.user.findMany({
+      where: { companyName: session.companyName },
       include: { payrollConfig: true },
       orderBy: { name: 'asc' }
     });

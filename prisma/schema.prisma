@@ -29,6 +29,7 @@ model User {
   bankAccount    String?
   status         String         @default("ACTIVE")
   isFirstLogin   Boolean        @default(true)
+  passwordIssuedAt DateTime     @default(now())
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   activities     ActivityLog[]

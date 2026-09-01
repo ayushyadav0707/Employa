@@ -32,7 +32,7 @@ export async function decrypt(input: string): Promise<any> {
   }
 }
 
-export async function createSession(user: { id: string; role: string; loginId: string; isFirstLogin: boolean }) {
+export async function createSession(user: { id: string; role: string; loginId: string; isFirstLogin: boolean; companyName: string | null }) {
   const expires = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
   const session = await encrypt({ ...user, expires });
 
@@ -50,7 +50,17 @@ export async function getSession() {
   const cookieStore = await cookies();
   const sessionCookie = cookieStore.get('session')?.value;
   if (!sessionCookie) return null;
-  return await decrypt(sessionCookie);
+  
+  const payload = await decrypt(sessionCookie);
+  if (!payload) return null;
+
+  // Stale Session Invalidation: 
+  // Reject tokens that were signed before we added companyName to the payload.
+  if (payload.companyName === undefined) {
+    return null;
+  }
+  
+  return payload;
 }
 
 export async function clearSession() {
