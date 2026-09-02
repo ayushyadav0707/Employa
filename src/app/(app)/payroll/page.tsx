@@ -18,11 +18,14 @@ export default async function PayrollPage() {
     },
   });
 
-  // Admin also gets list of all employees for the admin view
+  // Admin also gets list of all active employees for the admin view
   let allUsers = null;
   if (isAdmin) {
     allUsers = await prisma.user.findMany({
-      where: { companyName: session.companyName },
+      where: { 
+        companyName: session.companyName,
+        status: { not: 'TERMINATED' }
+      },
       include: { payrollConfig: true },
       orderBy: { name: 'asc' }
     });

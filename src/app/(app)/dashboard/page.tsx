@@ -16,7 +16,10 @@ export default async function DashboardPage() {
 
   // 1. Fetch Users
   const employees = await prisma.user.findMany({
-    where: { companyName: session.companyName },
+    where: { 
+      companyName: session.companyName,
+      status: { not: 'TERMINATED' }
+    },
     orderBy: { createdAt: 'desc' },
     select: {
       id: true,

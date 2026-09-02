@@ -20,9 +20,12 @@ export default async function AttendancePage() {
   const monthPrefix = getCurrentMonthPrefix();
 
   if (isAdmin) {
-    // Admin: Fetch all employees with today's attendance
+    // Admin: Fetch all active employees with today's attendance
     const usersWithTodayAttendance = await prisma.user.findMany({
-      where: { companyName: session.companyName },
+      where: { 
+        companyName: session.companyName,
+        status: { not: 'TERMINATED' }
+      },
       select: {
         id: true,
         name: true,
