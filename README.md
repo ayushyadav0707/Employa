@@ -125,7 +125,7 @@ erDiagram
 
     USER {
         string id PK
-        string loginId UK
+        string loginId UK "Format: TA[YYYY][FI][LI][000]"
         string email UK
         string password
         string role "ADMIN | EMPLOYEE"
@@ -199,14 +199,15 @@ graph LR
 ## 🚀 Core Modules & Features
 
 ### 🔐 1. Authentication & Role-Based Access Control (RBAC)
-- **Login Credentials**: Standard login via Company Login ID (e.g. `DAYFLOWMASTER01`, `OIJODO20260002`) or Email.
+- **Login Credentials**: Standard login via Company Login ID (e.g. `TA2026TA001`, `TA2026JD002`) or Email.
 - **Strict Role-Gating**: `ADMIN` / `HR` users access administrative consoles; `EMPLOYEE` users are restricted to their own profiles, punch sessions, and balances.
 - **Password Security**: Passwords hashed with `bcryptjs` (salt rounds: 10). Session tokens stored in HTTP-only `jose` encrypted JWT cookies.
 
-### 👥 2. Employee Profile & Admin Directory (`/employees`, `/profile`)
+### 🧑‍💼 2. Employee Profile & Admin Directory (`/employees`, `/profile`)
 - **Searchable Team Directory**: Instant search across names, job titles, and departments.
 - **Statutory HR Fields**: Dedicated tabs for PAN Number, 12-digit UAN, Bank Account, Salary, Phone, and Residential Address.
-- **Live Creation**: Admin route (`/dashboard/employees/create`) auto-generates Login IDs and initial passwords.
+- **Live Creation & Onboarding**: Admin route (`/dashboard/employees/create`) auto-generates Login IDs (e.g. `TA2026JD001`) and sends beautiful HTML onboarding emails via Resend.
+- **Soft Deletions & Email Release**: Terminating an employee instantly revokes their access and hides them from directories, but preserves all historical attendance/payroll data. Their email is automatically released for re-use.
 
 ### ⏱️ 3. Attendance Tracking & Real-Time Clock Engine (`/attendance`)
 - **Live Stopwatch Work Timer**: Real-time counter ticking since check-in with dynamic pulse state badges (`Working Now`, `On Break`, `Clocked Out`).
@@ -224,18 +225,11 @@ graph LR
 
 ---
 
-## 🔑 Judge & Evaluator Quick Test Credentials
+## 👨‍⚖️ Judge & Evaluator Testing
 
-All 6 accounts are pre-seeded in the database with passwords verified:
+The database is seeded with a single Master Admin account during initialization. To evaluate the system, please log in with your assigned Master Admin credentials. 
 
-| Role | Persona Name | Login ID | Email | Password | Primary Demo Feature |
-|:---|:---|:---|:---|:---|:---|
-| **ADMIN** | **Master Admin** | `DAYFLOWMASTER01` | `admin@dayflow.com` | `AdminPassword123!` | Full Admin Console & Metrics |
-| **ADMIN** (HR) | **Emily Zhang** | `OIEMZH20260001` | `emily.hr@dayflow.com` | `Employee123!` | Leave Approvals & Regularization |
-| **EMPLOYEE** | **John Doe** | `OIJODO20260002` | `john@dayflow.com` | `Employee123!` | Live Clock Widget & Attendance |
-| **EMPLOYEE** | **Sarah Jenkins** | `OISJEN20260003` | `sarah@dayflow.com` | `Employee123!` | Profile Statutory PAN/UAN |
-| **EMPLOYEE** | **Alex Rivera** | `OIARIV20260004` | `alex@dayflow.com` | `Employee123!` | Pending 3-Day Leave Request |
-| **EMPLOYEE** | **Priya Sharma** | `OIPSHA20260005` | `priya@dayflow.com` | `Employee123!` | Half-day punch & Timesheet |
+*To test employee flows, navigate to the **Employees** tab to register a new user. The system will auto-generate their ID and instantly email their temporary password to the assigned inbox.*
 
 ---
 
@@ -275,7 +269,7 @@ Our codebase is structured with strict separation of concerns for enterprise sca
 
 4. **Initialize & Seed the Database:**
    ```bash
-   npx prisma db push --force-reset
+   npx prisma db push
    npx tsx prisma/seed.ts
    ```
 
