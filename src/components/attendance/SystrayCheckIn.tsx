@@ -4,10 +4,31 @@ import { useState, useEffect, useTransition } from 'react';
 import { checkIn, checkOut, getTodayAttendance } from '@/app/actions/attendance';
 import { LogIn, LogOut, Loader2 } from 'lucide-react';
 
+const OFFICE_LAT = 21.104719;
+const OFFICE_LNG = 79.042799;
+const ALLOWED_RADIUS = 200; // 200 meters to account for GPS inaccuracies inside buildings
+
+// Haversine formula to calculate distance in meters
+function getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+  const R = 6371e3; // metres
+  const φ1 = lat1 * Math.PI/180;
+  const φ2 = lat2 * Math.PI/180;
+  const Δφ = (lat2-lat1) * Math.PI/180;
+  const Δλ = (lon2-lon1) * Math.PI/180;
+
+  const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ/2) * Math.sin(Δλ/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+  return R * c; 
+}
+
 export default function SystrayCheckIn() {
   const [status, setStatus] = useState<'Present' | 'Absent' | 'Leave' | 'Loading'>('Loading');
   const [isCheckedIn, setIsCheckedIn] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isCheckingLocation, setIsCheckingLocation] = useState(false);
 
   useEffect(() => {
     async function loadAttendance() {
@@ -32,22 +53,80 @@ export default function SystrayCheckIn() {
   }, []);
 
   const handleCheckIn = () => {
-    startTransition(async () => {
-      const res = await checkIn();
-      if (res.success) {
-        setStatus('Present');
-        setIsCheckedIn(true);
-      }
-    });
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsCheckingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const distance = getDistance(
+          OFFICE_LAT, OFFICE_LNG,
+          position.coords.latitude, position.coords.longitude
+        );
+
+        if (distance > ALLOWED_RADIUS) {
+          setIsCheckingLocation(false);
+          alert(`🚫 Geofence Alert: You are ${Math.round(distance)} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of the office (${OFFICE_LAT}, ${OFFICE_LNG}) to clock in.`);
+          return;
+        }
+
+        // Inside geofence, proceed with check-in
+        startTransition(async () => {
+          const res = await checkIn();
+          if (res.success) {
+            setStatus('Present');
+            setIsCheckedIn(true);
+          }
+          setIsCheckingLocation(false);
+        });
+      },
+      (error) => {
+        setIsCheckingLocation(false);
+        alert("📍 Unable to retrieve your location. Please allow location access in your browser to check in.");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   const handleCheckOut = () => {
-    startTransition(async () => {
-      const res = await checkOut();
-      if (res.success) {
-        setIsCheckedIn(false);
-      }
-    });
+    if (!navigator.geolocation) {
+      alert("Geolocation is not supported by your browser.");
+      return;
+    }
+
+    setIsCheckingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const distance = getDistance(
+          OFFICE_LAT, OFFICE_LNG,
+          position.coords.latitude, position.coords.longitude
+        );
+
+        if (distance > ALLOWED_RADIUS) {
+          setIsCheckingLocation(false);
+          alert(`🚫 Geofence Alert: You are ${Math.round(distance)} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of the office to clock out. If you forgot to clock out before leaving, please contact HR to regularize your timesheet.`);
+          return;
+        }
+
+        // Inside geofence, proceed with check-out
+        startTransition(async () => {
+          const res = await checkOut();
+          if (res.success) {
+            setIsCheckedIn(false);
+          }
+          setIsCheckingLocation(false);
+        });
+      },
+      (error) => {
+        setIsCheckingLocation(false);
+        alert("📍 Unable to retrieve your location. Please allow location access in your browser to check out.");
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
   };
 
   if (status === 'Loading') {
@@ -85,10 +164,10 @@ export default function SystrayCheckIn() {
         {!isCheckedIn && status === 'Absent' && (
           <button
             onClick={handleCheckIn}
-            disabled={isPending}
+            disabled={isPending || isCheckingLocation}
             className="flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 text-xs font-bold rounded-lg border border-green-200 transition-colors disabled:opacity-50"
           >
-            {isPending ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <LogIn className="w-3.5 h-3.5 mr-1.5" />}
+            {(isPending || isCheckingLocation) ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <LogIn className="w-3.5 h-3.5 mr-1.5" />}
             Check In
           </button>
         )}
