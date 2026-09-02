@@ -34,30 +34,27 @@ export async function createEmployee(formData: FormData) {
     const lastInit = parts.length > 1 ? parts[parts.length - 1].charAt(0).toUpperCase() : 'X';
     const prefix = `TA${year}${firstInit}${lastInit}`;
 
-    // Get the most recent employee with this prefix to determine the next sequence
-    // It remains company-scoped to prevent tracking total count across tenants and avoid collisions
-    const lastEmployee = await prisma.user.findFirst({
+    // Get all loginIds for this company this year to find the highest sequence
+    // The sequence is company-wide, not dependent on the initials.
+    const allCompanyEmployees = await prisma.user.findMany({
       where: {
         companyName: session.companyName,
         loginId: {
-          startsWith: prefix
+          startsWith: `TA${year}`
         }
       },
-      orderBy: {
-        loginId: 'desc'
-      },
-      select: {
-        loginId: true
-      }
+      select: { loginId: true }
     });
     
     let nextSeqNum = 1;
-    if (lastEmployee && lastEmployee.loginId) {
-      const lastSeqStr = lastEmployee.loginId.substring(prefix.length);
-      const lastSeq = parseInt(lastSeqStr, 10);
-      if (!isNaN(lastSeq)) {
-        nextSeqNum = lastSeq + 1;
-      }
+    if (allCompanyEmployees.length > 0) {
+      const sequences = allCompanyEmployees.map(emp => {
+        // ID format is TA2026AY002. Last 3 chars are sequence.
+        const seqStr = emp.loginId.slice(-3);
+        const num = parseInt(seqStr, 10);
+        return isNaN(num) ? 0 : num;
+      });
+      nextSeqNum = Math.max(...sequences) + 1;
     }
     
     const seq = String(nextSeqNum).padStart(3, '0');
@@ -93,25 +90,48 @@ export async function createEmployee(formData: FormData) {
     try {
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy_key');
-      await resend.emails.send({
-        from: 'Dayflow HR <onboarding@dayflow.com>',
-        to: email,
-        subject: 'Welcome to Dayflow - Your Login Credentials',
+      const { data, error } = await resend.emails.send({
+        from: 'Team ADAP(T) <onboarding@resend.dev>',
+        to: 'admin.team.adapt@gmail.com', // Hardcoded to bypass Sandbox restrictions
+        subject: 'Your Employa account is ready',
         html: `
-          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2>Welcome to Dayflow!</h2>
-            <p>Hi ${name},</p>
-            <p>Your Dayflow HRMS account has been created.</p>
-            <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 5px 0;"><strong>Login ID:</strong> ${loginId}</p>
-              <p style="margin: 5px 0;"><strong>Temporary Password:</strong> ${rawPassword}</p>
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background-color: #ffffff;">
+            <div style="background-color: #111827; padding: 24px; text-align: center;">
+              <h2 style="color: #ffffff; margin: 0; font-size: 20px; font-weight: 600;">Welcome to Team ADAP(T)</h2>
             </div>
-            <p style="color: #d97706; font-size: 14px;">⚠️ Please log in and change your password immediately.</p>
-            <br/>
-            <p>Best,<br/>Dayflow HR Team</p>
+            <div style="padding: 32px 24px;">
+              <p style="font-size: 16px; color: #374151; margin-top: 0; margin-bottom: 16px;">Hi ${name},</p>
+              <p style="font-size: 16px; color: #374151; margin-top: 0; margin-bottom: 24px; line-height: 1.5;">An account has been created for you on Employa HRMS. Use the credentials below to log in for the first time.</p>
+              
+              <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+                <p style="margin: 0 0 12px 0; font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Employee ID</p>
+                <p style="margin: 0 0 20px 0; font-size: 24px; color: #0f172a; font-weight: 700; letter-spacing: 0.02em;">${loginId}</p>
+                
+                <p style="margin: 0 0 12px 0; font-size: 14px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Temporary Password</p>
+                <p style="margin: 0; font-size: 18px; color: #0f172a; font-weight: 600; font-family: monospace; background: #e2e8f0; display: inline-block; padding: 4px 12px; border-radius: 4px;">${rawPassword}</p>
+              </div>
+              
+              <div style="background-color: #fefce8; border-left: 4px solid #eab308; padding: 16px; margin-bottom: 32px; border-radius: 0 4px 4px 0;">
+                <p style="margin: 0; color: #854d0e; font-size: 14px; line-height: 1.5;">⚠️ This password is temporary. You'll be asked to set a new one immediately after your first login.</p>
+              </div>
+              
+              <div style="text-align: center; margin-bottom: 32px;">
+                <a href="https://employa-hrms.vercel.app/login" style="display: inline-block; background-color: #7c3aed; color: #ffffff; text-decoration: none; font-weight: 600; padding: 14px 28px; border-radius: 6px; font-size: 16px;">Log In to Dayflow &rarr;</a>
+              </div>
+              
+              <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.5;">If you weren't expecting this account, please contact your HR administrator.</p>
+            </div>
+            <div style="background-color: #f9fafb; padding: 20px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+              <p style="margin: 0; color: #9ca3af; font-size: 12px;">&copy; 2026 Team ADAP(T) . All rights reserved.</p>
+            </div>
           </div>
         `
       });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
       emailSent = true;
       console.log('Successfully sent onboarding email to', email);
     } catch (emailError) {
@@ -140,8 +160,11 @@ export async function createEmployee(formData: FormData) {
 
     revalidatePath('/employees');
     return { success: true, employee: newEmployee, password: rawPassword, emailSent };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to create employee', error);
+    if (error.code === 'P2002' && error.meta?.target?.includes('email')) {
+      return { success: false, error: 'An employee with this email address already exists.' };
+    }
     return { success: false, error: 'Failed to create employee' };
   }
 }
@@ -245,10 +268,20 @@ export async function deleteEmployee(id: string) {
 
     if (!employee) return { success: false, error: 'Employee not found.' };
 
+    // Email Release Strategy: rename the email to free it up for future hires
+    // e.g. john@company.com -> john@company.com.terminated.1709123841
+    let newEmail = employee.email;
+    if (newEmail) {
+      newEmail = `${newEmail}.terminated.${Date.now()}`;
+    }
+
     // Soft delete: keep historical records intact
     await prisma.user.update({
       where: { id },
-      data: { status: 'TERMINATED' }
+      data: { 
+        status: 'TERMINATED',
+        email: newEmail
+      }
     });
 
     await prisma.activityLog.create({

@@ -271,11 +271,11 @@ export default function ProfileForm({ user, isAdmin = false, leaveBalance, isOwn
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Full Name</label>
-                      <input type="text" name="name" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.name} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white transition-shadow outline-none" />
+                      <input type="text" name="name" required disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.name} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white transition-shadow outline-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Email Address</label>
-                      <input type="email" name="email" disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.email} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white transition-shadow outline-none" />
+                      <input type="email" name="email" required disabled={!isEditing || (!isAdmin && user)} defaultValue={user?.email} className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 text-gray-900 bg-white transition-shadow outline-none" />
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Phone Number</label>
