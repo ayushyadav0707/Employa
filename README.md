@@ -1,16 +1,17 @@
 <div align="center">
 
-# ⚡ Dayflow HRMS
+# ⚡ Employa
 ### *Every workday, perfectly aligned.*
 
 [![Next.js](https://img.shields.io/badge/Next.js-16.3.2-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Prisma ORM](https://img.shields.io/badge/Prisma-v6-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
-[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite)](https://sqlite.org/)
-[![CI/CD](https://img.shields.io/badge/GitHub_Actions-Strict_CI%2FCD-2088FF?style=for-the-badge&logo=github-actions)](https://github.com/features/actions)
+[![Prisma ORM](https://img.shields.io/badge/Prisma-v5-2D3748?style=for-the-badge&logo=prisma)](https://www.prisma.io/)
+[![Deployment](https://img.shields.io/badge/Vercel-Live_Demo-000000?style=for-the-badge&logo=vercel)](https://employa-hrms.vercel.app/)
 
 **Enterprise-Grade Human Resource Management System built for the Odoo Hackathon 2026**
+
+🌐 **Live Deployment**: **[https://employa-hrms.vercel.app/](https://employa-hrms.vercel.app/)**
 
 [Explore Live Demo](#-judge--evaluator-quick-test-credentials) • [Architecture](#-system-architecture--workflow-diagrams) • [Modules](#-core-modules--features) • [Installation](#-getting-started)
 
@@ -19,7 +20,7 @@
 
 ## 📌 Executive Summary
 
-**Dayflow HRMS** is an integrated human resource management platform designed following strict Odoo ERP workflow standards. It delivers a unified workplace experience spanning multi-role authentication, interactive employee directories, a real-time stopwatch attendance engine, leave approval matrices, and salary structure configurations with automated payslip generation.
+**Employa HRMS** is an integrated human resource management platform designed following strict Odoo ERP workflow standards. It delivers a unified workplace experience spanning multi-role authentication, interactive employee directories, a real-time stopwatch attendance engine, leave approval matrices, and salary structure configurations with automated payslip generation.
 
 ---
 
@@ -124,7 +125,7 @@ erDiagram
 
     USER {
         string id PK
-        string loginId UK
+        string loginId UK "Format: TA[YYYY][FI][LI][000]"
         string email UK
         string password
         string role "ADMIN | EMPLOYEE"
@@ -198,14 +199,15 @@ graph LR
 ## 🚀 Core Modules & Features
 
 ### 🔐 1. Authentication & Role-Based Access Control (RBAC)
-- **Login Credentials**: Standard login via Company Login ID (e.g. `DAYFLOWMASTER01`, `OIJODO20260002`) or Email.
+- **Login Credentials**: Standard login via Company Login ID (e.g. `TA2026TA001`, `TA2026JD002`) or Email.
 - **Strict Role-Gating**: `ADMIN` / `HR` users access administrative consoles; `EMPLOYEE` users are restricted to their own profiles, punch sessions, and balances.
 - **Password Security**: Passwords hashed with `bcryptjs` (salt rounds: 10). Session tokens stored in HTTP-only `jose` encrypted JWT cookies.
 
-### 👥 2. Employee Profile & Admin Directory (`/employees`, `/profile`)
+### 🧑‍💼 2. Employee Profile & Admin Directory (`/employees`, `/profile`)
 - **Searchable Team Directory**: Instant search across names, job titles, and departments.
 - **Statutory HR Fields**: Dedicated tabs for PAN Number, 12-digit UAN, Bank Account, Salary, Phone, and Residential Address.
-- **Live Creation**: Admin route (`/dashboard/employees/create`) auto-generates Login IDs and initial passwords.
+- **Live Creation & Onboarding**: Admin route (`/dashboard/employees/create`) auto-generates Login IDs (e.g. `TA2026JD001`) and sends beautiful HTML onboarding emails via Resend.
+- **Soft Deletions & Email Release**: Terminating an employee instantly revokes their access and hides them from directories, but preserves all historical attendance/payroll data. Their email is automatically released for re-use.
 
 ### ⏱️ 3. Attendance Tracking & Real-Time Clock Engine (`/attendance`)
 - **Live Stopwatch Work Timer**: Real-time counter ticking since check-in with dynamic pulse state badges (`Working Now`, `On Break`, `Clocked Out`).
@@ -223,33 +225,21 @@ graph LR
 
 ---
 
-## 🔑 Judge & Evaluator Quick Test Credentials
+## 👨‍⚖️ Judge & Evaluator Testing
 
-All 6 accounts are pre-seeded in the database with passwords verified:
+The database is seeded with a single Master Admin account during initialization. To evaluate the system, please log in with your assigned Master Admin credentials. 
 
-| Role | Persona Name | Login ID | Email | Password | Primary Demo Feature |
-|:---|:---|:---|:---|:---|:---|
-| **ADMIN** | **Master Admin** | `DAYFLOWMASTER01` | `admin@dayflow.com` | `AdminPassword123!` | Full Admin Console & Metrics |
-| **ADMIN** (HR) | **Emily Zhang** | `OIEMZH20260001` | `emily.hr@dayflow.com` | `Employee123!` | Leave Approvals & Regularization |
-| **EMPLOYEE** | **John Doe** | `OIJODO20260002` | `john@dayflow.com` | `Employee123!` | Live Clock Widget & Attendance |
-| **EMPLOYEE** | **Sarah Jenkins** | `OISJEN20260003` | `sarah@dayflow.com` | `Employee123!` | Profile Statutory PAN/UAN |
-| **EMPLOYEE** | **Alex Rivera** | `OIARIV20260004` | `alex@dayflow.com` | `Employee123!` | Pending 3-Day Leave Request |
-| **EMPLOYEE** | **Priya Sharma** | `OIPSHA20260005` | `priya@dayflow.com` | `Employee123!` | Half-day punch & Timesheet |
+*To test employee flows, navigate to the **Employees** tab to register a new user. The system will auto-generate their ID and instantly email their temporary password to the assigned inbox.*
 
 ---
 
-## ⚙️ Automated CI/CD Quality Pipeline
+## ⚙️ Architecture & Code Quality Standards
 
-Every Pull Request and commit is tested through our strict 6-stage GitHub Actions workflow ([`.github/workflows/ci.yml`](.github/workflows/ci.yml)):
-
-```
-1. 📥 npm ci                        --> Clean lockfile dependency install
-2. 🗄️ npx prisma validate/generate   --> Schema validation & Prisma client build
-3. 🎨 npm run lint                  --> ESLint syntax & React Hook checks
-4. 🏷️ npx tsc --noEmit              --> Strict TypeScript type-checking (0 errors)
-5. 🧪 npm test                      --> Security & test suite execution
-6. 🏗️ npm run build                 --> Production Next.js 16 optimization check
-```
+Our codebase is structured with strict separation of concerns for enterprise scale:
+- **Server Actions & Route Handlers**: Type-safe business operations under `src/app/actions` and `src/app/api`.
+- **Modular Component Hierarchies**: Reusable component domains partitioned into `/attendance`, `/leave`, `/payroll`, and `/profile`.
+- **Strict TypeScript & ESLint**: Fully type-checked across 24 routes with zero compiler warnings or lint errors.
+- **Automated Vercel Deployments**: Continuous zero-downtime deployment synchronized with Prisma client generation.
 
 ---
 
@@ -279,7 +269,7 @@ Every Pull Request and commit is tested through our strict 6-stage GitHub Action
 
 4. **Initialize & Seed the Database:**
    ```bash
-   npx prisma db push --force-reset
+   npx prisma db push
    npx tsx prisma/seed.ts
    ```
 
@@ -287,7 +277,7 @@ Every Pull Request and commit is tested through our strict 6-stage GitHub Action
    ```bash
    npm run dev
    ```
-   Open **[http://localhost:3000](http://localhost:3000)** in your browser!
+   Open **(https://employa-hrms.vercel.app/)** in your browser!
 
 ---
 

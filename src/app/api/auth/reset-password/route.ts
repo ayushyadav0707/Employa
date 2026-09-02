@@ -25,6 +25,16 @@ export async function POST(req: Request) {
       }
     });
 
+    // Log the successful password reset (First Login)
+    await prisma.activityLog.create({
+      data: {
+        userId: session.id,
+        message: 'Password was reset (First login completion).',
+        type: 'Success',
+        icon: 'ShieldCheck'
+      }
+    });
+
     // Destroy the current session so the user is forced to log in again with their new password
     await clearSession();
 

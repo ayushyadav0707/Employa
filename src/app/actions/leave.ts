@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { getSession } from '@/lib/auth';
 
 export async function submitLeaveRequest(formData: {
   userId: string;
@@ -11,6 +12,14 @@ export async function submitLeaveRequest(formData: {
   reason: string;
   attachmentUrl?: string;
 }) {
+  const session = await getSession();
+  if (!session) throw new Error('Unauthorized');
+  
+  // IDOR Protection: You can only submit a leave request for yourself
+  if (session.id !== formData.userId) {
+    throw new Error('Forbidden: You can only submit leave requests for your own account.');
+  }
+
   const start = new Date(formData.startDate);
   const end = new Date(formData.endDate);
   
@@ -49,6 +58,11 @@ export async function updateLeaveRequestStatus(
   status: 'Approved' | 'Rejected',
   adminComment: string
 ) {
+  const session = await getSession();
+  if (!session || session.role !== 'ADMIN') {
+    throw new Error('Unauthorized: Admin access required.');
+  }
+
   // Begin transaction to ensure consistency when updating balance
   await prisma.$transaction(async (tx) => {
     const request = await tx.leaveRequest.findUnique({

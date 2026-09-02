@@ -7,12 +7,14 @@ interface LeaveApplicationModalProps {
   onClose: () => void;
   onSubmit: (data: any) => void;
   isSubmitting: boolean;
+  currentUser?: any;
 }
 
 export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
   onClose,
   onSubmit,
   isSubmitting,
+  currentUser,
 }) => {
   const [formData, setFormData] = useState({
     type: 'Paid Time off',
@@ -23,6 +25,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
   });
 
   const [allocationDays, setAllocationDays] = useState(0);
+  const [isHalfDay, setIsHalfDay] = useState(false);
 
   // Auto-calculate allocation days
   useEffect(() => {
@@ -30,15 +33,26 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
       const diffTime = Math.abs(end.getTime() - start.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+      let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
       if (end >= start) {
-        setAllocationDays(diffDays);
+        if (formData.startDate === formData.endDate && isHalfDay) {
+          setAllocationDays(0.5);
+        } else {
+          setAllocationDays(diffDays);
+        }
       } else {
         setAllocationDays(0);
       }
     } else {
       setAllocationDays(0);
+    }
+  }, [formData.startDate, formData.endDate, isHalfDay]);
+
+  // Reset half-day if dates don't match
+  useEffect(() => {
+    if (formData.startDate !== formData.endDate) {
+      setIsHalfDay(false);
     }
   }, [formData.startDate, formData.endDate]);
 
@@ -63,7 +77,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
     if (e.target.files && e.target.files[0]) {
       setFormData({
         ...formData,
-        attachmentUrl: e.target.files[0].name, // Simulate URL with name for mock
+        attachmentUrl: e.target.files[0].name, // Using actual filename
       });
     }
   };
@@ -90,8 +104,8 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             </label>
             <input
               type="text"
-              className="px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-100 dark:bg-zinc-900 text-gray-500 cursor-not-allowed text-sm"
-              value="EMP001 (John Doe)"
+              className="px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-100 dark:bg-zinc-900 text-gray-500 cursor-not-allowed text-sm font-semibold"
+              value={currentUser ? `${currentUser.loginId} (${currentUser.name})` : 'Loading...'}
               disabled
             />
           </div>
@@ -142,12 +156,25 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             <label className="text-sm font-semibold text-gray-700 dark:text-zinc-300">
               Allocation (Days)
             </label>
-            <input
-              type="text"
-              disabled
-              className="px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-50 dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 text-sm font-semibold"
-              value={allocationDays > 0 ? `${allocationDays} Days` : 'Select dates'}
-            />
+            <div className="flex items-center gap-4">
+              <input
+                type="text"
+                disabled
+                className="flex-1 px-3 py-2 border border-gray-200 dark:border-zinc-700 rounded-lg bg-gray-50 dark:bg-zinc-900 text-gray-600 dark:text-zinc-400 text-sm font-semibold"
+                value={allocationDays > 0 ? `${allocationDays} Days` : 'Select dates'}
+              />
+              {formData.startDate && formData.endDate && formData.startDate === formData.endDate && (
+                <label className="flex items-center gap-2 text-sm text-gray-700 font-medium cursor-pointer">
+                  <input 
+                    type="checkbox" 
+                    className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+                    checked={isHalfDay}
+                    onChange={(e) => setIsHalfDay(e.target.checked)}
+                  />
+                  Half Day
+                </label>
+              )}
+            </div>
           </div>
 
           <div className="flex flex-col gap-1.5">

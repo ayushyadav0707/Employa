@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -14,7 +14,7 @@ model User {
   emailVerified  DateTime?
   verifyToken    String?        @unique
   password       String
-  role           String         @default("EMPLOYEE") // "ADMIN" | "EMPLOYEE"
+  role           String         @default("EMPLOYEE")
   companyName    String?
   companyLogo    String?
   name           String
@@ -29,14 +29,15 @@ model User {
   bankAccount    String?
   status         String         @default("ACTIVE")
   isFirstLogin   Boolean        @default(true)
-
-  attendances    Attendance[]
-  leaveRequests  LeaveRequest[] @relation("UserLeaveRequests")
-  leaveBalance   LeaveBalance?
-  payrollConfig  PayrollConfig?
-
+  passwordIssuedAt DateTime     @default(now())
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
+  activities     ActivityLog[]
+  attendances    Attendance[]
+  leaveBalance   LeaveBalance?
+  leaveRequests  LeaveRequest[] @relation("UserLeaveRequests")
+  payrollConfig  PayrollConfig?
+  tasks          Task[]
 }
 
 model Attendance {
@@ -52,8 +53,7 @@ model Attendance {
   breakDurationMinutes Int      @default(0)
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date])
 }
@@ -71,8 +71,7 @@ model LeaveRequest {
   adminComment   String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
-
-  user User @relation("UserLeaveRequests", fields: [userId], references: [id], onDelete: Cascade)
+  user           User     @relation("UserLeaveRequests", fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model LeaveBalance {
@@ -81,8 +80,7 @@ model LeaveBalance {
   paidTimeOff Int      @default(24)
   sickTimeOff Int      @default(7)
   updatedAt   DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PayrollConfig {
@@ -92,6 +90,39 @@ model PayrollConfig {
   taxPct    Float?   @default(10.0)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Task {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  category  String   @default("Operations")
+  priority  String   @default("Medium")
+  dueDate   DateTime
+  status    String   @default("Pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  type        String   @default("Meeting")
+  eventDate   DateTime
+  timeString  String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ActivityLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  message   String
+  type      String   @default("Info")
+  icon      String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
