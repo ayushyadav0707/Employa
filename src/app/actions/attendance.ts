@@ -4,16 +4,35 @@ import { prisma } from '@/lib/prisma';
 import { getSession } from '@/lib/auth';
 import { revalidatePath } from 'next/cache';
 
-function getTodayDateString() {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
+function getISTDate(date: Date = new Date()) {
+  // Convert to IST string format: YYYY-MM-DD, HH:mm:ss
+  const options: Intl.DateTimeFormatOptions = { 
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+    hour12: false 
+  };
+  
+  const formatter = new Intl.DateTimeFormat('en-CA', options); // en-CA gives YYYY-MM-DD
+  const parts = formatter.formatToParts(date);
+  
+  const year = parts.find(p => p.type === 'year')?.value;
+  const month = parts.find(p => p.type === 'month')?.value;
+  const day = parts.find(p => p.type === 'day')?.value;
+  const hour = parts.find(p => p.type === 'hour')?.value;
+  const minute = parts.find(p => p.type === 'minute')?.value;
+  
+  return {
+    dateString: `${year}-${month}-${day}`,
+    timeString: `${hour}:${minute}`
+  };
 }
 
 export async function getTodayAttendance() {
   const session = await getSession();
   if (!session) return null;
 
-  const today = getTodayDateString();
+  const { dateString: today } = getISTDate();
 
   return await prisma.attendance.findUnique({
     where: {
@@ -29,9 +48,7 @@ export async function checkIn() {
   const session = await getSession();
   if (!session) return { success: false, error: 'Unauthorized' };
 
-  const today = getTodayDateString();
-  const now = new Date();
-  const timeString = now.toTimeString().split(' ')[0].substring(0, 5); // HH:mm
+  const { dateString: today, timeString } = getISTDate();
 
   try {
     const attendance = await prisma.attendance.upsert({
@@ -66,9 +83,7 @@ export async function checkOut() {
   const session = await getSession();
   if (!session) return { success: false, error: 'Unauthorized' };
 
-  const today = getTodayDateString();
-  const now = new Date();
-  const timeString = now.toTimeString().split(' ')[0].substring(0, 5); // HH:mm
+  const { dateString: today, timeString } = getISTDate();
 
   try {
     const existing = await prisma.attendance.findUnique({
