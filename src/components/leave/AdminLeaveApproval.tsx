@@ -40,7 +40,7 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-zinc-100">
+        <h3 className="text-xl font-bold text-gray-800 ">
           Leave Requests Queue
         </h3>
         <div className="flex gap-2">
@@ -48,7 +48,7 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
             className={`px-4 py-2 text-xs font-semibold rounded-lg shadow-sm border transition-colors ${
               filter === 'Pending'
                 ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-50'
+                : 'bg-white  border-gray-200  text-gray-600  hover:bg-gray-50'
             }`}
             onClick={() => setFilter('Pending')}
           >
@@ -58,7 +58,7 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
             className={`px-4 py-2 text-xs font-semibold rounded-lg shadow-sm border transition-colors ${
               filter === 'All'
                 ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'bg-white dark:bg-zinc-800 border-gray-200 dark:border-zinc-700 text-gray-600 dark:text-zinc-300 hover:bg-gray-50'
+                : 'bg-white  border-gray-200  text-gray-600  hover:bg-gray-50'
             }`}
             onClick={() => setFilter('All')}
           >
@@ -73,63 +73,63 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
         </div>
       )}
 
-      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
+      <div className="bg-white  rounded-xl border border-gray-200  shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
-            <thead className="bg-gray-50 dark:bg-zinc-700/50">
+          <table className="min-w-full divide-y divide-gray-200 ">
+            <thead className="bg-gray-50 ">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Duration
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Days
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Reason
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Attachment
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
+            <tbody className="bg-white  divide-y divide-gray-200 ">
               {filteredRequests.map((req) => (
                 <tr key={req.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <div className="text-sm font-semibold text-gray-900 ">
                       {req.user?.name ?? req.userId}
                     </div>
-                    <div className="text-xs text-gray-500 dark:text-zinc-400">
+                    <div className="text-xs text-gray-500 ">
                       {req.user?.loginId ?? req.userId}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
                     {req.type}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
                     {req.startDate} to {req.endDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
                     {req.allocationDays}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-zinc-400 max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm text-gray-500  max-w-xs truncate">
                     {req.reason || '-'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
                     {req.attachmentUrl ? (
-                      <span className="text-indigo-600 dark:text-indigo-400 font-mono text-xs underline cursor-pointer">
+                      <span className="text-indigo-600  font-mono text-xs underline cursor-pointer">
                         {req.attachmentUrl}
                       </span>
                     ) : (
@@ -140,10 +140,10 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         req.status === 'Approved'
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          ? 'bg-green-100 text-green-800  '
                           : req.status === 'Rejected'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                          ? 'bg-red-100 text-red-800  '
+                          : 'bg-amber-100 text-amber-800  '
                       }`}
                     >
                       {req.status}
@@ -166,7 +166,7 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
                         </button>
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400 dark:text-zinc-500 font-medium">
+                      <span className="text-xs text-gray-400  font-medium">
                         {req.adminComment ? `Rejected: "${req.adminComment}"` : 'Approved'}
                       </span>
                     )}
@@ -177,7 +177,7 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
                 <tr>
                   <td
                     colSpan={8}
-                    className="px-6 py-10 text-center text-sm text-gray-500 dark:text-zinc-400"
+                    className="px-6 py-10 text-center text-sm text-gray-500 "
                   >
                     No pending leave requests.
                   </td>

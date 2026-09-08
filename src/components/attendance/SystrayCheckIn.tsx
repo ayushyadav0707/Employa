@@ -4,8 +4,9 @@ import { useState, useEffect, useTransition } from 'react';
 import { checkIn, checkOut, getTodayAttendance } from '@/app/actions/attendance';
 import { LogIn, LogOut, Loader2 } from 'lucide-react';
 
-const OFFICE_LAT = 21.104719;
-const OFFICE_LNG = 79.042799;
+const OFFICE_LAT = 13.132032;
+const OFFICE_LNG = 77.572028;
+const OFFICE_NAME = "Comfort World D-Block";
 const ALLOWED_RADIUS = 200; // 200 meters to account for GPS inaccuracies inside buildings
 
 // Haversine formula to calculate distance in meters
@@ -69,7 +70,7 @@ export default function SystrayCheckIn() {
 
         if (distance > ALLOWED_RADIUS) {
           setIsCheckingLocation(false);
-          alert(`🚫 Geofence Alert: You are ${Math.round(distance)} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of the office (${OFFICE_LAT}, ${OFFICE_LNG}) to clock in.`);
+          alert(`🚫 Geofence Alert: You are ${Math.round(distance).toLocaleString()} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of ${OFFICE_NAME} to clock in.`);
           return;
         }
 
@@ -108,7 +109,7 @@ export default function SystrayCheckIn() {
 
         if (distance > ALLOWED_RADIUS) {
           setIsCheckingLocation(false);
-          alert(`🚫 Geofence Alert: You are ${Math.round(distance)} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of the office to clock out. If you forgot to clock out before leaving, please contact HR to regularize your timesheet.`);
+          alert(`🚫 Geofence Alert: You are ${Math.round(distance).toLocaleString()} meters away!\n\nYou must be within ${ALLOWED_RADIUS}m of ${OFFICE_NAME} to clock out. If you forgot to clock out before leaving, please contact HR to regularize your timesheet.`);
           return;
         }
 

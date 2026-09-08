@@ -22,7 +22,7 @@ export const TimeOffClient: React.FC<TimeOffClientProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-extrabold text-gray-900 ">
           Time Off Management
         </h2>
       </div>
