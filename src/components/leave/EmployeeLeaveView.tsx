@@ -40,7 +40,7 @@ export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold text-gray-800 dark:text-zinc-100">
+        <h3 className="text-xl font-bold text-gray-800 ">
           My Leave Balance
         </h3>
         <button
@@ -62,25 +62,25 @@ export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
 
       {/* Leave Balances Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm flex flex-col gap-2">
-          <span className="text-sm font-semibold text-gray-500 dark:text-zinc-400">
+        <div className="bg-white  p-6 rounded-xl border border-gray-200  shadow-sm flex flex-col gap-2">
+          <span className="text-sm font-semibold text-gray-500 ">
             Paid Time Off
           </span>
-          <span className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+          <span className="text-3xl font-bold text-indigo-600 ">
             {balance.paidTimeOff}{' '}
-            <span className="text-sm font-normal text-gray-500 dark:text-zinc-400">
+            <span className="text-sm font-normal text-gray-500 ">
               Days Available
             </span>
           </span>
         </div>
         
-        <div className="bg-white dark:bg-zinc-800 p-6 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm flex flex-col gap-2">
-          <span className="text-sm font-semibold text-gray-500 dark:text-zinc-400">
+        <div className="bg-white  p-6 rounded-xl border border-gray-200  shadow-sm flex flex-col gap-2">
+          <span className="text-sm font-semibold text-gray-500 ">
             Sick Time Off
           </span>
-          <span className="text-3xl font-bold text-amber-500 dark:text-amber-400">
+          <span className="text-3xl font-bold text-amber-500 ">
             {balance.sickTimeOff}{' '}
-            <span className="text-sm font-normal text-gray-500 dark:text-zinc-400">
+            <span className="text-sm font-normal text-gray-500 ">
               Days Available
             </span>
           </span>
@@ -88,65 +88,65 @@ export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
       </div>
 
       {/* Leave History Table */}
-      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-zinc-700">
-          <h4 className="text-lg font-bold text-gray-800 dark:text-zinc-100 font-sans">
+      <div className="bg-white  rounded-xl border border-gray-200  shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-200 ">
+          <h4 className="text-lg font-bold text-gray-800  font-sans">
             Leave History
           </h4>
         </div>
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
-            <thead className="bg-gray-50 dark:bg-zinc-700/50">
+          <table className="min-w-full divide-y divide-gray-200 ">
+            <thead className="bg-gray-50 ">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Start Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   End Date
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Days
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 dark:text-zinc-400 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
                   Remarks / Admin Comment
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
+            <tbody className="bg-white  divide-y divide-gray-200 ">
               {requests.map((req) => (
                 <tr key={req.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 ">
                     {req.type}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
                     {req.startDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
                     {req.endDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-zinc-300">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
                     {req.allocationDays}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         req.status === 'Approved'
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                          ? 'bg-green-100 text-green-800  '
                           : req.status === 'Rejected'
-                          ? 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400'
+                          ? 'bg-red-100 text-red-800  '
+                          : 'bg-amber-100 text-amber-800  '
                       }`}
                     >
                       {req.status}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500 dark:text-zinc-400 max-w-xs truncate">
+                  <td className="px-6 py-4 text-sm text-gray-500  max-w-xs truncate">
                     {req.adminComment ? (
                       <span className="text-red-500">{req.adminComment}</span>
                     ) : (
@@ -159,7 +159,7 @@ export const EmployeeLeaveView: React.FC<EmployeeLeaveViewProps> = ({
                 <tr>
                   <td
                     colSpan={6}
-                    className="px-6 py-10 text-center text-sm text-gray-500 dark:text-zinc-400"
+                    className="px-6 py-10 text-center text-sm text-gray-500 "
                   >
                     No leave requests found.
                   </td>
