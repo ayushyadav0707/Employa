@@ -31,9 +31,8 @@ export async function submitLeaveRequest(formData: {
   const diffTime = Math.abs(end.getTime() - start.getTime());
   const allocationDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
-  // Validation: Sick leave requires attachment
-  if (formData.type === 'Sick time off' && !formData.attachmentUrl) {
-    throw new Error('Sick leave request requires a doctor\'s certificate (attachment).');
+  if (formData.type === 'Sick time off' && allocationDays > 2) {
+    throw new Error('Sick leave cannot be applied for more than 2 days at a time.');
   }
 
   // Save to database
@@ -41,12 +40,11 @@ export async function submitLeaveRequest(formData: {
     data: {
       userId: formData.userId,
       type: formData.type,
-      startDate: formData.startDate,
-      endDate: formData.endDate,
+      startDate: start,
+      endDate: end,
       allocationDays,
       reason: formData.reason,
       status: 'Pending',
-      attachmentUrl: formData.attachmentUrl || null,
     },
   });
 

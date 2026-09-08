@@ -64,12 +64,16 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (allocationDays <= 0) {
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    
+    if (end < start) {
       alert('End date must be on or after start date.');
       return;
     }
-    if (formData.type === 'Sick time off' && !formData.attachmentUrl) {
-      alert('Sick leave requires a certificate attachment.');
+
+    if (formData.type === 'Sick time off' && allocationDays > 2) {
+      alert('Sick leave cannot be applied for more than 2 days at a time.');
       return;
     }
 
@@ -196,14 +200,21 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700 ">
-              Mobile Number (Optional)
+              Mobile Number
             </label>
             <input
               type="tel"
+              required
+              maxLength={10}
+              pattern="[0-9]{10}"
+              title="Please enter exactly 10 digits"
               className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
               value={formData.mobileNumber}
-              onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-              placeholder="+1 234 567 890"
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, ''); // Allow only numbers
+                setFormData({ ...formData, mobileNumber: val });
+              }}
+              placeholder="1234567890"
             />
           </div>
 
@@ -219,32 +230,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             ></textarea>
           </div>
 
-          {/* Conditional attachment for Sick time off */}
-          {formData.type === 'Sick time off' && (
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700  flex items-center gap-1">
-                For sick leave certificate <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 px-4 py-2 border border-gray-300  rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100   text-sm font-medium text-gray-700  transition-colors">
-                  <Upload size={16} /> Upload Certificate
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    accept=".pdf,.png,.jpg,.jpeg"
-                  />
-                </label>
-                {formData.attachmentUrl ? (
-                  <span className="text-xs text-gray-600  font-mono truncate max-w-[200px]">
-                    {formData.attachmentUrl}
-                  </span>
-                ) : (
-                  <span className="text-xs text-red-500">No file uploaded</span>
-                )}
-              </div>
-            </div>
-          )}
+
 
           <div className="flex justify-end gap-3 border-t border-gray-100  pt-4 mt-2">
             <button

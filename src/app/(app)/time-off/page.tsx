@@ -41,10 +41,15 @@ export default async function TimeOffPage() {
     updatedAt: r.updatedAt instanceof Date ? r.updatedAt.toISOString() : r.updatedAt,
   }));
 
+  const serializedBalance = balance ? {
+    ...balance,
+    updatedAt: balance.updatedAt instanceof Date ? balance.updatedAt.toISOString() : balance.updatedAt,
+  } : { paidTimeOff: 24, sickTimeOff: 7 };
+
   return (
     <TimeOffClient
       role={isAdmin ? 'Admin' : 'Employee'}
-      initialBalance={balance || { paidTimeOff: 24, sickTimeOff: 7 }}
+      initialBalance={serializedBalance}
       initialRequests={serializedRequests}
       userId={userId}
       currentUser={currentUser}
