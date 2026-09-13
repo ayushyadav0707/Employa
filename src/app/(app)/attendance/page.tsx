@@ -3,28 +3,41 @@ import { prisma } from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import AttendancePageClient from "./AttendancePageClient";
 
-function getTodayDateString() {
-  return new Date().toISOString().split('T')[0];
+function getISTDate() {
+  const options: Intl.DateTimeFormatOptions = { 
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric', month: '2-digit', day: '2-digit'
+  };
+  const formatter = new Intl.DateTimeFormat('en-CA', options);
+  const parts = formatter.formatToParts(new Date());
+  
+  const year = parts.find(p => p.type === 'year')?.value;
+  const month = parts.find(p => p.type === 'month')?.value;
+  const day = parts.find(p => p.type === 'day')?.value;
+  
+  return {
+    dateString: `${year}-${month}-${day}`,
+    monthPrefix: `${year}-${month}`
+  };
 }
 
-function getCurrentMonthPrefix() {
-  return new Date().toISOString().substring(0, 7);
-}
-
-export default async function AttendancePage() {
+export default async function AttendancePage({ searchParams }: { searchParams: { month?: string } }) {
   const session = await getSession();
   if (!session) redirect('/login');
 
   const isAdmin = session.role === "ADMIN";
-  const today = getTodayDateString();
-  const monthPrefix = getCurrentMonthPrefix();
+  const { dateString: today, monthPrefix: currentMonthPrefix } = getISTDate();
+  
+  // Await searchParams before accessing properties per Next.js 15+ rules
+  const resolvedParams = await searchParams;
+  const monthPrefix = resolvedParams.month || currentMonthPrefix;
 
   if (isAdmin) {
-    // Admin: Fetch all active employees with today's attendance
+    // Admin: Fetch all active employees with today's attendance (today is fixed to actual today for check-ins)
     const usersWithTodayAttendance = await prisma.user.findMany({
       where: { 
         companyName: session.companyName,
-        status: { not: 'TERMINATED' }
+        status: { not: 'TERMINATED' }, loginId: { not: 'DAYFLOWMASTER01' }
       },
       select: {
         id: true,
@@ -41,7 +54,7 @@ export default async function AttendancePage() {
       orderBy: { name: 'asc' }
     });
 
-    // All attendance records this month for stats
+    // All attendance records for selected month for stats
     const allMonthRecords = await prisma.attendance.findMany({
       where: { 
         date: { startsWith: monthPrefix },
@@ -67,7 +80,9 @@ export default async function AttendancePage() {
       <AttendancePageClient
         isAdmin={true}
         currentUserId={session.id}
+        currentUserName={session.name || 'Admin'}
         todayDate={today}
+        viewMonthStr={monthPrefix}
         adminUsers={usersWithTodayAttendance.map(u => ({
           id: u.id,
           name: u.name,
@@ -82,7 +97,7 @@ export default async function AttendancePage() {
       />
     );
   } else {
-    // Employee: Fetch own attendance for month
+    // Employee: Fetch own attendance for selected month
     const myMonthRecords = await prisma.attendance.findMany({
       where: {
         userId: session.id,
@@ -91,21 +106,32 @@ export default async function AttendancePage() {
       orderBy: { date: 'desc' }
     });
 
-    const todayAttendance = myMonthRecords.find(r => r.date === today) || null;
+    const todayAttendance = await prisma.attendance.findUnique({
+      where: {
+        userId_date: {
+          userId: session.id,
+          date: today
+        }
+      }
+    });
 
     const totalHours = myMonthRecords.reduce((sum, r) => sum + (r.totalHours || 0), 0);
-    const presentDays = myMonthRecords.filter(r => r.status === 'Present').length;
-    const halfDays = myMonthRecords.filter(r => r.status === 'Half-day').length;
+    const invalidCheckInsCount = myMonthRecords.filter(r => r.checkIn && !r.checkOut && r.date !== today).length;
+    const presentDaysCount = myMonthRecords.filter(r => r.status === 'Present' && !(r.checkIn && !r.checkOut && r.date !== today)).length;
+    const halfDays = myMonthRecords.filter(r => r.status === 'Half-day' || r.status === 'Half Day').length;
+    const presentDays = presentDaysCount + (halfDays * 0.5);
 
     return (
       <AttendancePageClient
         isAdmin={false}
         currentUserId={session.id}
+        currentUserName={session.name || 'User'}
         todayDate={today}
+        viewMonthStr={monthPrefix}
         myMonthRecords={myMonthRecords}
         todayAttendance={todayAttendance}
         myStats={{
-          totalHours: Math.round(totalHours * 10) / 10,
+          totalHours: Number(totalHours.toFixed(2)),
           presentDays,
           halfDays,
           totalRecords: myMonthRecords.length,

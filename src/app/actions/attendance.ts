@@ -50,6 +50,15 @@ export async function checkIn() {
 
   const { dateString: today, timeString } = getISTDate();
 
+  const currentHour = parseInt(timeString.split(':')[0], 10);
+  const currentMinute = parseInt(timeString.split(':')[1], 10);
+  if (currentHour < 8 || currentHour >= 18) {
+    return { success: false, error: 'Check-in is only allowed between 8:00 AM and 6:00 PM' };
+  }
+
+  const isAfter10AM = currentHour > 10 || (currentHour === 10 && currentMinute > 0);
+  const checkInStatus = isAfter10AM ? 'Half-day' : 'Present';
+
   try {
     const attendance = await prisma.attendance.upsert({
       where: {
@@ -60,13 +69,13 @@ export async function checkIn() {
       },
       update: {
         checkIn: timeString, // If they already existed but no checkin
-        status: 'Present'
+        status: checkInStatus
       },
       create: {
         userId: session.id,
         date: today,
         checkIn: timeString,
-        status: 'Present',
+        status: checkInStatus,
         location: 'HQ - Floor 3'
       }
     });
