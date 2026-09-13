@@ -14,7 +14,7 @@ export const PayrollViewer: React.FC<PayrollViewerProps> = ({ role, user, allUse
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center print:hidden">
-        <h2 className="text-2xl font-extrabold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-extrabold text-gray-900">
           Payroll &amp; Salary Management
         </h2>
       </div>
