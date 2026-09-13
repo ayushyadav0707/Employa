@@ -6,7 +6,7 @@ import { AdminLeaveApproval } from './AdminLeaveApproval';
 
 interface TimeOffClientProps {
   role: 'Employee' | 'Admin';
-  initialBalance: { paidTimeOff: number; sickTimeOff: number };
+  initialBalance: { annual: number; sick: number; casual: number; earned: number };
   initialRequests: any[];
   userId: string;
   currentUser?: any;
@@ -20,13 +20,7 @@ export const TimeOffClient: React.FC<TimeOffClientProps> = ({
   currentUser,
 }) => {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-extrabold text-gray-900 ">
-          Time Off Management
-        </h2>
-      </div>
-
+    <div className="flex flex-col h-full w-full max-w-[1400px] mx-auto animate-in fade-in duration-500">
       {role === 'Employee' ? (
         <EmployeeLeaveView
           balance={initialBalance}

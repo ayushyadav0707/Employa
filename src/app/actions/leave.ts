@@ -112,3 +112,22 @@ export async function updateLeaveRequestStatus(
 
   revalidatePath('/time-off');
 }
+
+export async function cancelLeaveRequest(id: string) {
+  const session = await getSession();
+  if (!session) throw new Error('Unauthorized');
+
+  const request = await prisma.leaveRequest.findUnique({
+    where: { id },
+  });
+
+  if (!request) throw new Error('Leave request not found');
+  if (request.userId !== session.id) throw new Error('Forbidden: You can only cancel your own leave requests.');
+  if (request.status !== 'Pending') throw new Error('Only pending requests can be cancelled.');
+
+  await prisma.leaveRequest.delete({
+    where: { id },
+  });
+
+  revalidatePath('/time-off');
+}

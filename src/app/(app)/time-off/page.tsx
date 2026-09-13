@@ -41,10 +41,49 @@ export default async function TimeOffPage() {
     updatedAt: r.updatedAt instanceof Date ? r.updatedAt.toISOString() : r.updatedAt,
   }));
 
-  const serializedBalance = balance ? {
-    ...balance,
-    updatedAt: balance.updatedAt instanceof Date ? balance.updatedAt.toISOString() : balance.updatedAt,
-  } : { paidTimeOff: 24, sickTimeOff: 7 };
+
+  // Dynamic Leave Calculation
+  const currentMonth = new Date().getMonth(); // 0-11
+  const baseBalances = {
+    'Annual Leave': 12,
+    'Sick Leave': 7,
+    'Casual Leave': 12,
+    'Earned Leave': currentMonth
+  };
+
+  const usedBalances = {
+    'Annual Leave': 0,
+    'Sick Leave': 0,
+    'Casual Leave': 0,
+    'Earned Leave': 0
+  };
+
+  const myApprovedLeavesThisYear = await prisma.leaveRequest.findMany({
+    where: {
+      userId: session.id,
+      status: 'Approved',
+      startDate: { gte: new Date(new Date().getFullYear(), 0, 1) }
+    }
+  });
+
+  myApprovedLeavesThisYear.forEach(leave => {
+    let type = leave.type;
+    if (type === 'Paid Time off' || type === 'Paid time off') type = 'Annual Leave';
+    if (type === 'Sick time off') type = 'Sick Leave';
+    if (type === 'Unpaid Leaves') type = 'Casual Leave';
+    if (type in usedBalances) {
+      usedBalances[type as keyof typeof usedBalances] += leave.allocationDays || 0;
+    }
+  });
+
+  const leaveBalances = {
+    annual: Math.max(0, baseBalances['Annual Leave'] - usedBalances['Annual Leave']),
+    sick: Math.max(0, baseBalances['Sick Leave'] - usedBalances['Sick Leave']),
+    casual: Math.max(0, baseBalances['Casual Leave'] - usedBalances['Casual Leave']),
+    earned: Math.max(0, baseBalances['Earned Leave'] - usedBalances['Earned Leave'])
+  };
+
+  const serializedBalance = leaveBalances;
 
   return (
     <TimeOffClient
