@@ -54,7 +54,7 @@ export default function ResetPasswordPage() {
     <div className="flex h-screen w-full items-center justify-center bg-gray-50">
       <div className="w-full max-w-md bg-white p-8 rounded-xl shadow-sm border border-gray-200 relative overflow-hidden">
         {/* Top Accent Bar */}
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-indigo-600"></div>
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-primary text-black"></div>
         
         <h1 className="text-2xl font-bold mb-2 text-center text-gray-900 mt-2">Change Password Required</h1>
         <p className="text-sm text-gray-500 text-center mb-6">
@@ -68,13 +68,13 @@ export default function ResetPasswordPage() {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium mb-1.5 text-gray-700">New Password</label>
-              <input type="password" name="newPassword" minLength={6} required onKeyDown={(e) => { if (e.key === ' ') e.preventDefault(); }} className="w-full border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-shadow" />
+              <input type="password" name="newPassword" minLength={6} required onKeyDown={(e) => { if (e.key === ' ') e.preventDefault(); }} className="w-full border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white transition-shadow" />
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5 text-gray-700">Confirm New Password</label>
-              <input type="password" name="confirmPassword" minLength={6} required onKeyDown={(e) => { if (e.key === ' ') e.preventDefault(); }} className="w-full border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-gray-900 bg-white transition-shadow" />
+              <input type="password" name="confirmPassword" minLength={6} required onKeyDown={(e) => { if (e.key === ' ') e.preventDefault(); }} className="w-full border border-gray-300 p-2.5 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary text-gray-900 bg-white transition-shadow" />
             </div>
-            <button type="submit" disabled={loading} className="w-full bg-indigo-600 text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 mt-2 shadow-sm">
+            <button type="submit" disabled={loading} className="w-full bg-primary text-black text-white font-semibold py-2.5 px-4 rounded-lg hover:bg-primary text-black transition-colors disabled:opacity-50 mt-2 shadow-sm">
               {loading ? 'Updating...' : 'Update Password'}
             </button>
           </form>

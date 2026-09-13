@@ -54,18 +54,18 @@ export const EmployeePayslip: React.FC<EmployeePayslipProps> = ({ user }) => {
         </h3>
         <button
           onClick={handlePrint}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-primary text-black hover:bg-primary-hover text-black font-semibold rounded-lg shadow transition-colors"
         >
           <Printer size={16} /> Print / Save as PDF
         </button>
       </div>
 
       {/* Printable Payslip */}
-      <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md max-w-4xl mx-auto w-full print:border-none print:shadow-none print:p-0">
+      <div className="bg-white p-8 rounded-[24px] border border-border shadow-md max-w-4xl mx-auto w-full print:border-none print:shadow-none print:p-0">
 
         {/* Company Header */}
-        <div className="text-center border-b border-gray-200 pb-6 mb-8">
-          <h2 className="text-3xl font-extrabold text-indigo-600 tracking-tight">EMPLOYA</h2>
+        <div className="text-center border-b border-border pb-6 mb-8">
+          <h2 className="text-3xl font-extrabold text-primary tracking-tight">EMPLOYA</h2>
           <p className="text-xs text-gray-400 mt-0.5 uppercase tracking-widest">Human Resource Management System</p>
           <p className="text-sm text-gray-500 mt-2 font-medium">Payslip for the month of {monthName}</p>
 
@@ -91,7 +91,7 @@ export const EmployeePayslip: React.FC<EmployeePayslipProps> = ({ user }) => {
 
           {/* Earnings */}
           <div className="bg-gray-50 p-6 rounded-xl flex flex-col gap-3">
-            <h4 className="text-md font-bold text-indigo-600 border-b border-gray-200 pb-2">Earnings</h4>
+            <h4 className="text-md font-bold text-primary border-b border-border pb-2">Earnings</h4>
             {[
               { label: 'Basic Salary', value: breakdown.basic, note: '50% of wage' },
               { label: 'House Rent Allowance (HRA)', value: breakdown.hra, note: '50% of basic' },
@@ -108,7 +108,7 @@ export const EmployeePayslip: React.FC<EmployeePayslipProps> = ({ user }) => {
                 <span className="font-semibold">{formatCurrency(value)}</span>
               </div>
             ))}
-            <div className="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-3 mt-auto">
+            <div className="flex justify-between text-base font-bold text-gray-900 border-t border-border pt-3 mt-auto">
               <span>Total Earnings</span>
               <span>{formatCurrency(breakdown.totalEarnings)}</span>
             </div>
@@ -116,7 +116,7 @@ export const EmployeePayslip: React.FC<EmployeePayslipProps> = ({ user }) => {
 
           {/* Deductions */}
           <div className="bg-gray-50 p-6 rounded-xl flex flex-col gap-3">
-            <h4 className="text-md font-bold text-red-500 border-b border-gray-200 pb-2">Deductions</h4>
+            <h4 className="text-md font-bold text-red-500 border-b border-border pb-2">Deductions</h4>
             <div className="flex justify-between text-sm text-gray-700">
               <div>
                 <span>Provident Fund (PF)</span>
@@ -131,7 +131,7 @@ export const EmployeePayslip: React.FC<EmployeePayslipProps> = ({ user }) => {
               </div>
               <span className="font-semibold">{formatCurrency(breakdown.profTax)}</span>
             </div>
-            <div className="flex justify-between text-base font-bold text-gray-900 border-t border-gray-200 pt-3 mt-auto">
+            <div className="flex justify-between text-base font-bold text-gray-900 border-t border-border pt-3 mt-auto">
               <span>Total Deductions</span>
               <span>{formatCurrency(breakdown.totalDeductions)}</span>
             </div>

@@ -24,7 +24,7 @@ export default async function PayrollPage() {
     allUsers = await prisma.user.findMany({
       where: { 
         companyName: session.companyName,
-        status: { not: 'TERMINATED' }
+        status: { not: 'TERMINATED' }, loginId: { not: 'DAYFLOWMASTER01' }
       },
       include: { payrollConfig: true },
       orderBy: { name: 'asc' }

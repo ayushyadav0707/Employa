@@ -19,12 +19,7 @@ export default async function MyProfilePage() {
   if (!user) redirect('/login');
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-        <p className="text-gray-500">Manage your personal information and view your job details.</p>
-      </div>
-      
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
       <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} isOwnProfile={true} />
     </div>
   );

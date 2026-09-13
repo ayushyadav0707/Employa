@@ -17,7 +17,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
   currentUser,
 }) => {
   const [formData, setFormData] = useState({
-    type: 'Paid Time off',
+    type: 'Annual Leave',
     startDate: '',
     endDate: '',
     mobileNumber: '',
@@ -31,24 +31,28 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
   // Calculate min date: 10 days in the past
   const minDate = new Date();
   minDate.setDate(minDate.getDate() - 10);
-  const minDateString = `${minDate.getFullYear()}-${String(minDate.getMonth() + 1).padStart(2, '0')}-${String(minDate.getDate()).padStart(2, '0')}`;
+  const minDateString = minDate.toISOString().split('T')[0];
 
-  // Auto-calculate allocation days
   useEffect(() => {
     if (formData.startDate && formData.endDate) {
       const start = new Date(formData.startDate);
       const end = new Date(formData.endDate);
-      const diffTime = Math.abs(end.getTime() - start.getTime());
-      let diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-
       if (end >= start) {
-        if (formData.startDate === formData.endDate && dayPortion !== 'Full day') {
+        const diffTime = Math.abs(end.getTime() - start.getTime());
+        let days = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        if (days === 1 && dayPortion !== 'Full day') {
           setAllocationDays(0.5);
         } else {
-          setAllocationDays(diffDays);
+          setAllocationDays(days);
         }
       } else {
         setAllocationDays(0);
+      }
+    } else if (formData.startDate && !formData.endDate) {
+      if (dayPortion !== 'Full day') {
+        setAllocationDays(0.5);
+      } else {
+        setAllocationDays(1);
       }
     } else {
       setAllocationDays(0);
@@ -64,12 +68,16 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (allocationDays <= 0) {
+    const start = new Date(formData.startDate);
+    const end = new Date(formData.endDate);
+    
+    if (end < start) {
       alert('End date must be on or after start date.');
       return;
     }
-    if (formData.type === 'Sick time off' && !formData.attachmentUrl) {
-      alert('Sick leave requires a certificate attachment.');
+
+    if (formData.type === 'Sick time off' && allocationDays > 2) {
+      alert('Sick leave cannot be applied for more than 2 days at a time.');
       return;
     }
 
@@ -129,15 +137,17 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             <label className="text-sm font-semibold text-gray-700 ">
               Time Off Type
             </label>
-            <select
-              className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-              value={formData.type}
-              onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-            >
-              <option value="Paid Time off">Paid Time off</option>
-              <option value="Sick time off">Sick time off</option>
-              <option value="Unpaid Leaves">Unpaid Leaves</option>
-            </select>
+              <select 
+                className="w-full bg-white border border-gray-200 text-gray-900 text-[13.5px] font-medium rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary focus:outline-none"
+                required
+                value={formData.type}
+                onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+              >
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Casual Leave">Casual Leave</option>
+                <option value="Earned Leave">Earned Leave</option>
+              </select>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -149,7 +159,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
                 type="date"
                 required
                 min={minDateString}
-                className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 value={formData.startDate}
                 onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
               />
@@ -162,7 +172,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
                 type="date"
                 required
                 min={minDateString}
-                className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 value={formData.endDate}
                 onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
               />
@@ -182,7 +192,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
               />
               {formData.startDate && formData.endDate && formData.startDate === formData.endDate && (
                 <select
-                  className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="px-3 py-1.5 border border-gray-200 rounded-lg bg-white text-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary"
                   value={dayPortion}
                   onChange={(e) => setDayPortion(e.target.value as any)}
                 >
@@ -196,14 +206,21 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
 
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700 ">
-              Mobile Number (Optional)
+              Mobile Number
             </label>
             <input
               type="tel"
-              className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+              maxLength={10}
+              pattern="[0-9]{10}"
+              title="Please enter exactly 10 digits"
+              className="px-3 py-2 border border-gray-200 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               value={formData.mobileNumber}
-              onChange={(e) => setFormData({ ...formData, mobileNumber: e.target.value })}
-              placeholder="+1 234 567 890"
+              onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, ''); // Allow only numbers
+                setFormData({ ...formData, mobileNumber: val });
+              }}
+              placeholder="1234567890"
             />
           </div>
 
@@ -212,39 +229,14 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
               Reason
             </label>
             <textarea
-              className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="px-3 py-2 border border-gray-200  rounded-lg bg-white  text-gray-800  text-sm focus:outline-none focus:ring-2 focus:ring-primary"
               rows={3}
               value={formData.reason}
               onChange={(e) => setFormData({ ...formData, reason: e.target.value })}
             ></textarea>
           </div>
 
-          {/* Conditional attachment for Sick time off */}
-          {formData.type === 'Sick time off' && (
-            <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-gray-700  flex items-center gap-1">
-                For sick leave certificate <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center gap-4">
-                <label className="flex items-center gap-2 px-4 py-2 border border-gray-300  rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100   text-sm font-medium text-gray-700  transition-colors">
-                  <Upload size={16} /> Upload Certificate
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                    accept=".pdf,.png,.jpg,.jpeg"
-                  />
-                </label>
-                {formData.attachmentUrl ? (
-                  <span className="text-xs text-gray-600  font-mono truncate max-w-[200px]">
-                    {formData.attachmentUrl}
-                  </span>
-                ) : (
-                  <span className="text-xs text-red-500">No file uploaded</span>
-                )}
-              </div>
-            </div>
-          )}
+
 
           <div className="flex justify-end gap-3 border-t border-gray-100  pt-4 mt-2">
             <button
@@ -257,7 +249,7 @@ export const LeaveApplicationModal: React.FC<LeaveApplicationModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow transition-colors flex items-center gap-2"
+              className="px-4 py-2 bg-primary text-black hover:bg-primary-hover rounded-lg text-sm font-semibold shadow transition-colors flex items-center gap-2"
               disabled={isSubmitting}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Request'}

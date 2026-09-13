@@ -67,7 +67,7 @@ function EmployeePayrollRow({ emp }: { emp: PayrollUser }) {
         <td className="px-6 py-4 whitespace-nowrap text-sm font-mono font-semibold text-gray-700">{emp.loginId}</td>
         <td className="px-6 py-4 whitespace-nowrap">
           <div className="flex items-center">
-            <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-sm mr-3">
+            <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-sm mr-3">
               {emp.name.charAt(0)}
             </div>
             <div>
@@ -80,7 +80,7 @@ function EmployeePayrollRow({ emp }: { emp: PayrollUser }) {
           {isEditing ? (
             <input
               type="number" min={1} required
-              className="px-3 py-1.5 border border-indigo-400 rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-40"
+              className="px-3 py-1.5 border border-primary rounded-lg bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-primary w-40"
               value={tempWage}
               onChange={(e) => setTempWage(Number(e.target.value))}
             />
@@ -100,10 +100,10 @@ function EmployeePayrollRow({ emp }: { emp: PayrollUser }) {
             </div>
           ) : (
             <div className="flex gap-2">
-              <button className="flex items-center gap-1 px-3 py-1.5 border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold shadow-sm transition-colors" onClick={() => setIsEditing(true)}>
+              <button className="flex items-center gap-1 px-3 py-1.5 border border-border hover:bg-gray-50 text-gray-700 rounded-lg text-xs font-semibold shadow-sm transition-colors" onClick={() => setIsEditing(true)}>
                 <Edit2 size={12} /> Edit
               </button>
-              <button className="flex items-center gap-1 px-3 py-1.5 border border-indigo-100 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-semibold transition-colors" onClick={() => setShowBreakdown(!showBreakdown)}>
+              <button className="flex items-center gap-1 px-3 py-1.5 border border-primary/20 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-xs font-semibold transition-colors" onClick={() => setShowBreakdown(!showBreakdown)}>
                 {showBreakdown ? 'Hide' : 'View'} Breakdown
               </button>
             </div>
@@ -118,7 +118,7 @@ function EmployeePayrollRow({ emp }: { emp: PayrollUser }) {
         </tr>
       )}
       {showBreakdown && !isEditing && (
-        <tr className="bg-indigo-50/50">
+        <tr className="bg-primary/5">
           <td colSpan={6} className="px-6 py-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
               {[
@@ -131,7 +131,7 @@ function EmployeePayrollRow({ emp }: { emp: PayrollUser }) {
                 { label: 'PF Deduction (−)', value: breakdown.pf, neg: true },
                 { label: 'Prof. Tax (−)', value: breakdown.profTax, neg: true },
               ].map(({ label, value, neg }) => (
-                <div key={label} className="bg-white p-3 rounded-lg border border-gray-200">
+                <div key={label} className="bg-white p-3 rounded-lg border border-border">
                   <p className="text-xs text-gray-500">{label}</p>
                   <p className={`text-sm font-bold ${neg ? 'text-red-600' : 'text-gray-900'}`}>{neg ? '−' : ''}{fmt(value as number)}</p>
                 </div>
@@ -157,17 +157,17 @@ export const AdminPayrollControl: React.FC<AdminPayrollControlProps> = ({ user, 
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+      <div className="bg-white p-6 rounded-[24px] border border-border shadow-sm">
         <h3 className="text-xl font-bold text-gray-800">Payroll Administration</h3>
         <p className="text-sm text-gray-500 mt-1">
           Update base wages for all employees. Salary components (Basic, HRA, PF, etc.) auto-recalculate from each employee's monthly wage.
         </p>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-border shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100 bg-gray-50/50">
           <h4 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-            <User className="w-4 h-4 text-indigo-500" />
+            <User className="w-4 h-4 text-primary" />
             All Employees — {users.length} total
           </h4>
         </div>
@@ -191,7 +191,7 @@ export const AdminPayrollControl: React.FC<AdminPayrollControlProps> = ({ user, 
       </div>
 
       {/* Salary calculation rules reference */}
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+      <div className="bg-gray-50 border border-border rounded-xl p-5">
         <h4 className="text-sm font-bold text-gray-800 mb-3">Standard Salary Calculation Rules (Applied to All Employees)</h4>
         <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1.5">
           <li><strong>Basic Salary:</strong> 50% of Base Monthly Wage</li>

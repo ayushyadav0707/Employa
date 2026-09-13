@@ -7,6 +7,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum EmploymentType {
+  PERMANENT
+  CONTRACT
+  INTERN
+}
+
 model User {
   id             String         @id @default(cuid())
   loginId        String         @unique
@@ -23,6 +29,7 @@ model User {
   profilePicture String?
   jobTitle       String?
   department     String?
+  employmentType EmploymentType @default(PERMANENT)
   salary         Float?         @default(50000)
   panNo          String?
   uanNo          String?

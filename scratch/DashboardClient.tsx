@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   UserCircle, Clock, CalendarCheck, CheckCircle2, 
   ArrowRight, UserCheck, UserX, Gift, Star, DollarSign, GraduationCap,
@@ -11,7 +11,6 @@ import Link from 'next/link';
 export default function DashboardClient({ 
   employees = [], 
   isAdmin = false, 
-  isFirstLogin = false,
   adminStats,
   employeeStats,
   tasks = [],
@@ -21,7 +20,6 @@ export default function DashboardClient({
 }: { 
   employees?: any[], 
   isAdmin?: boolean, 
-  isFirstLogin?: boolean,
   adminStats?: any,
   employeeStats?: any,
   tasks?: any[],
@@ -30,25 +28,14 @@ export default function DashboardClient({
   currentUser?: { name: string, profilePicture?: string }
 }) {
   
-  const firstName = currentUser?.name?.split(' ')[0] || 'User';
-  const leaveBalances = adminStats?.leaveBalances || employeeStats?.leaveBalances || { annual: 12, sick: 7, casual: 12, earned: 0 };
-
+  const firstName = currentUser?.name?.split(' ')[0] || 'Ayush';
   
   // Stats
-  const totalEmp = adminStats?.totalEmployees || employeeStats?.totalWorkingDays || 0;
-  const presentCount = adminStats?.presentToday || employeeStats?.presentDays || 0;
-  const leaveCount = adminStats?.onLeaveToday || employeeStats?.onLeaveDays || 0;
+  const totalEmp = adminStats?.totalEmployees || 120;
+  const presentCount = adminStats?.presentToday || 92;
+  const leaveCount = adminStats?.onLeaveToday || 12;
   
-  const presentPct = totalEmp > 0 ? Math.round((presentCount / totalEmp) * 100) : 0;
-
-  // Employment type counts from DB (admin only)
-  const permanentCount = adminStats?.permanentCount || 0;
-  const contractCount = adminStats?.contractCount || 0;
-  const internCount = adminStats?.internCount || 0;
-  const empTypeTotal = permanentCount + contractCount + internCount;
-  const permanentPct = empTypeTotal > 0 ? Math.round((permanentCount / empTypeTotal) * 100) : 0;
-  const contractPct = empTypeTotal > 0 ? Math.round((contractCount / empTypeTotal) * 100) : 0;
-  const internPct = empTypeTotal > 0 ? Math.round((internCount / empTypeTotal) * 100) : 0;
+  const presentPct = Math.round((presentCount / totalEmp) * 100) || 76;
 
   // Custom Radial Gauge Math
   const radius = 60;
@@ -57,16 +44,6 @@ export default function DashboardClient({
   const arcLength = circumference * (240 / 360);
   const strokeDasharray = `${arcLength} ${circumference}`;
   const strokeDashoffset = arcLength - (arcLength * (presentPct / 100));
-
-  const [mounted, setMounted] = useState(false);
-  
-  // Hydration fix
-  
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null; // Avoid hydration mismatch on initial render
 
   return (
     <div className="space-y-6 pb-12 animate-in fade-in duration-500">
@@ -134,36 +111,32 @@ export default function DashboardClient({
             {/* Employment Status Bar Chart */}
             <div className="bg-white rounded-[24px] border border-border shadow-sm p-6 flex flex-col">
               <h3 className="font-bold text-gray-900 mb-8">Employment Status</h3>
-              {empTypeTotal === 0 ? (
-                <p className="text-sm text-gray-400 italic text-center py-8">No data yet</p>
-              ) : (
-                <div className="flex-1 flex items-end justify-around pb-4 gap-4">
-                  {/* Permanent Bar */}
-                  <div className="flex flex-col items-center gap-3 w-16 group">
-                    <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
-                      <div className="absolute w-full bg-primary rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: `${permanentPct}%` }}></div>
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white shadow-sm z-10">{permanentPct}%</div>
-                    </div>
-                    <span className="text-[11px] font-bold text-gray-500">Permanent</span>
+              <div className="flex-1 flex items-end justify-around pb-4 gap-4">
+                {/* Bar 1 */}
+                <div className="flex flex-col items-center gap-3 w-16 group">
+                  <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
+                    <div className="absolute w-full bg-primary rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: '70%' }}></div>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-black text-white text-[10px] font-bold px-2 py-1 rounded-full border-2 border-white shadow-sm z-10">70%</div>
                   </div>
-                  {/* Contract Bar */}
-                  <div className="flex flex-col items-center gap-3 w-16 group">
-                    <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
-                      <div className="absolute w-full bg-[#252525] rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: `${contractPct}%` }}></div>
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded-full border-2 border-[#252525] shadow-sm z-10">{contractPct}%</div>
-                    </div>
-                    <span className="text-[11px] font-bold text-gray-500">Contract</span>
-                  </div>
-                  {/* Intern Bar */}
-                  <div className="flex flex-col items-center gap-3 w-16 group">
-                    <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
-                      <div className="absolute w-full bg-gray-300 rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: `${internPct}%` }}></div>
-                      <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-full border-2 border-gray-300 shadow-sm z-10">{internPct}%</div>
-                    </div>
-                    <span className="text-[11px] font-bold text-gray-500">Intern</span>
-                  </div>
+                  <span className="text-[11px] font-bold text-gray-500">Permanent</span>
                 </div>
-              )}
+                {/* Bar 2 */}
+                <div className="flex flex-col items-center gap-3 w-16 group">
+                  <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
+                    <div className="absolute w-full bg-[#252525] rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: '20%' }}></div>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-black text-[10px] font-bold px-2 py-1 rounded-full border-2 border-[#252525] shadow-sm z-10">20%</div>
+                  </div>
+                  <span className="text-[11px] font-bold text-gray-500">Contract</span>
+                </div>
+                {/* Bar 3 */}
+                <div className="flex flex-col items-center gap-3 w-16 group">
+                  <div className="relative w-full h-32 bg-[#FFF9E8] rounded-t-xl rounded-b-md flex items-end overflow-visible">
+                    <div className="absolute w-full bg-gray-300 rounded-t-xl rounded-b-md transition-all duration-700" style={{ height: '10%' }}></div>
+                    <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-full border-2 border-gray-300 shadow-sm z-10">10%</div>
+                  </div>
+                  <span className="text-[11px] font-bold text-gray-500">Intern</span>
+                </div>
+              </div>
             </div>
             
           </div>
@@ -174,8 +147,8 @@ export default function DashboardClient({
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mb-3">
                 <Calendar className="w-4 h-4 text-primary" />
               </div>
-              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">{leaveBalances.annual}</h4>
-                <p className="text-[11px] font-bold text-gray-500">Annual Leave</p>
+              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">12</h4>
+              <p className="text-[11px] font-bold text-gray-500">Annual Leave</p>
               <Link href="/time-off" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-4 h-4 text-primary" />
               </Link>
@@ -184,8 +157,8 @@ export default function DashboardClient({
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mb-3">
                 <Activity className="w-4 h-4 text-primary" />
               </div>
-              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">{leaveBalances.sick}</h4>
-                <p className="text-[11px] font-bold text-gray-500">Sick Leave</p>
+              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">7</h4>
+              <p className="text-[11px] font-bold text-gray-500">Sick Leave</p>
               <Link href="/time-off" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-4 h-4 text-primary" />
               </Link>
@@ -194,8 +167,8 @@ export default function DashboardClient({
               <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center mb-3">
                 <Briefcase className="w-4 h-4 text-primary" />
               </div>
-              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">{leaveBalances.casual}</h4>
-                <p className="text-[11px] font-bold text-gray-500">Casual Leave</p>
+              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">4</h4>
+              <p className="text-[11px] font-bold text-gray-500">Casual Leave</p>
               <Link href="/time-off" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-4 h-4 text-primary" />
               </Link>
@@ -204,8 +177,8 @@ export default function DashboardClient({
               <div className="w-8 h-8 rounded-full bg-[#FFF9E8] flex items-center justify-center mb-3">
                 <UserCheck className="w-4 h-4 text-primary" />
               </div>
-              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">{leaveBalances.earned}</h4>
-                <p className="text-[11px] font-bold text-gray-500">Earned Leave</p>
+              <h4 className="text-2xl font-extrabold text-gray-900 mb-1">2</h4>
+              <p className="text-[11px] font-bold text-gray-500">Earned Leave</p>
               <Link href="/time-off" className="absolute bottom-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
                 <ChevronRight className="w-4 h-4 text-primary" />
               </Link>
@@ -273,7 +246,7 @@ export default function DashboardClient({
           <div className="bg-white rounded-[24px] border border-border shadow-sm p-6">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-bold text-gray-900">Upcoming Schedule</h3>
-              <Link href="/events" className="text-[12px] font-bold text-primary hover:text-primary-hover">Add</Link>
+              <button className="text-[12px] font-bold text-primary hover:text-primary-hover">Add</button>
             </div>
             <div className="space-y-4">
               {events.length === 0 ? (
@@ -282,8 +255,8 @@ export default function DashboardClient({
                  events.slice(0, 4).map((evt, idx) => (
                    <div key={idx} className="flex gap-4 items-start p-3 rounded-xl hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-100 cursor-pointer">
                      <div className="w-12 h-12 rounded-xl bg-[#FFF9E8] flex flex-col items-center justify-center shrink-0 border border-primary/20">
-                       <span className="text-[10px] font-bold text-gray-500 uppercase">{new Date(evt.eventDate).toLocaleString('default', { month: 'short' })}</span>
-                       <span className="text-[16px] font-extrabold text-primary leading-none mt-0.5">{new Date(evt.eventDate).getDate()}</span>
+                       <span className="text-[10px] font-bold text-gray-500 uppercase">{new Date(evt.date).toLocaleString('default', { month: 'short' })}</span>
+                       <span className="text-[16px] font-extrabold text-primary leading-none mt-0.5">{new Date(evt.date).getDate()}</span>
                      </div>
                      <div className="flex-1 mt-0.5">
                        <h4 className="text-[13px] font-bold text-gray-900">{evt.title}</h4>

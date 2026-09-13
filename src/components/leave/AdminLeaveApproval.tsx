@@ -38,17 +38,17 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in duration-500">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-bold text-gray-800 ">
+        <h3 className="text-[24px] font-extrabold text-gray-900 leading-tight">
           Leave Requests Queue
         </h3>
         <div className="flex gap-2">
           <button
             className={`px-4 py-2 text-xs font-semibold rounded-lg shadow-sm border transition-colors ${
               filter === 'Pending'
-                ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'bg-white  border-gray-200  text-gray-600  hover:bg-gray-50'
+                ? 'bg-primary text-black border-primary'
+                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
             }`}
             onClick={() => setFilter('Pending')}
           >
@@ -57,8 +57,8 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
           <button
             className={`px-4 py-2 text-xs font-semibold rounded-lg shadow-sm border transition-colors ${
               filter === 'All'
-                ? 'bg-indigo-600 border-indigo-600 text-white'
-                : 'bg-white  border-gray-200  text-gray-600  hover:bg-gray-50'
+                ? 'bg-primary text-black border-primary'
+                : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
             }`}
             onClick={() => setFilter('All')}
           >
@@ -73,77 +73,82 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
         </div>
       )}
 
-      <div className="bg-white  rounded-xl border border-gray-200  shadow-sm overflow-hidden">
+      <div className="bg-white rounded-[24px] border border-border shadow-sm overflow-hidden p-2">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200 ">
-            <thead className="bg-gray-50 ">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Employee
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Type
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Duration
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Days
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Reason
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Attachment
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500  uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white  divide-y divide-gray-200 ">
+            <tbody className="bg-white divide-y divide-gray-50">
               {filteredRequests.map((req) => (
-                <tr key={req.id}>
+                <tr key={req.id} className="hover:bg-gray-50/50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-semibold text-gray-900 ">
+                    <div className="text-sm font-bold text-gray-900">
                       {req.user?.name ?? req.userId}
                     </div>
-                    <div className="text-xs text-gray-500 ">
+                    <div className="text-[11px] font-medium text-gray-400 mt-0.5 uppercase tracking-wider">
                       {req.user?.loginId ?? req.userId}
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">
                     {req.type}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
                     {req.startDate} to {req.endDate}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">
                     {req.allocationDays}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500  max-w-xs truncate">
-                    {req.reason || '-'}
+                  <td className="px-6 py-4 text-sm text-gray-500 font-medium max-w-xs truncate" title={req.reason}>
+                    {req.reason}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-550 ">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {req.attachmentUrl ? (
-                      <span className="text-indigo-600  font-mono text-xs underline cursor-pointer">
-                        {req.attachmentUrl}
-                      </span>
+                      <a
+                        href={req.attachmentUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary hover:underline font-bold"
+                      >
+                        View
+                      </a>
                     ) : (
                       '-'
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
                         req.status === 'Approved'
-                          ? 'bg-green-100 text-green-800  '
+                          ? 'bg-green-50 text-success border-green-100'
                           : req.status === 'Rejected'
-                          ? 'bg-red-100 text-red-800  '
-                          : 'bg-amber-100 text-amber-800  '
+                          ? 'bg-red-50 text-danger border-red-100'
+                          : 'bg-primary/10 text-primary border-primary/20'
                       }`}
                     >
                       {req.status}
@@ -153,20 +158,20 @@ export const AdminLeaveApproval: React.FC<AdminLeaveApprovalProps> = ({
                     {req.status === 'Pending' ? (
                       <div className="flex gap-2">
                         <button
-                          className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded text-xs font-semibold shadow transition-colors"
+                          className="px-4 py-1.5 bg-success hover:bg-success/90 text-white rounded-lg text-xs font-bold shadow-sm transition-colors"
                           onClick={() => handleAction(req.id, 'Approved')}
                         >
                           Approve
                         </button>
                         <button
-                          className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-xs font-semibold shadow transition-colors"
+                          className="px-4 py-1.5 bg-danger hover:bg-danger/90 text-white rounded-lg text-xs font-bold shadow-sm transition-colors"
                           onClick={() => handleAction(req.id, 'Rejected')}
                         >
                           Reject
                         </button>
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-400  font-medium">
+                      <span className="text-xs text-gray-400 font-medium">
                         {req.adminComment ? `Rejected: "${req.adminComment}"` : 'Approved'}
                       </span>
                     )}

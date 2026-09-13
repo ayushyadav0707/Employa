@@ -166,7 +166,7 @@ export default function SystrayCheckIn() {
           <button
             onClick={handleCheckIn}
             disabled={isPending || isCheckingLocation}
-            className="flex items-center px-3 py-1.5 bg-green-50 text-green-700 hover:bg-green-100 text-xs font-bold rounded-lg border border-green-200 transition-colors disabled:opacity-50"
+            className="flex items-center px-4 py-1.5 bg-primary text-black hover:bg-primary-hover text-xs font-bold rounded-full transition-colors disabled:opacity-50 shadow-sm"
           >
             {(isPending || isCheckingLocation) ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <LogIn className="w-3.5 h-3.5 mr-1.5" />}
             Check In
@@ -177,7 +177,7 @@ export default function SystrayCheckIn() {
           <button
             onClick={handleCheckOut}
             disabled={isPending}
-            className="flex items-center px-3 py-1.5 bg-red-50 text-red-700 hover:bg-red-100 text-xs font-bold rounded-lg border border-red-200 transition-colors disabled:opacity-50"
+            className="flex items-center px-4 py-1.5 bg-white text-black border border-border hover:bg-gray-50 text-xs font-bold rounded-full transition-colors disabled:opacity-50 shadow-sm"
           >
             {isPending ? <Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5 mr-1.5" />}
             Check Out
