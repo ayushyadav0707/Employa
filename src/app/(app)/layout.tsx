@@ -35,10 +35,10 @@ export default async function AppLayout({
     <div className="bg-gray-50 text-gray-900 flex h-screen overflow-hidden">
       <StrictSessionGuard />
       {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col hidden md:flex z-20 shadow-sm">
-        <div className="h-20 flex items-center px-8 border-b border-gray-100 gap-3">
-          <Image src="/logo.png" alt="Employa Logo" width={32} height={32} className="object-contain" />
-          <h1 className="text-[26px] font-bold text-violet-700 tracking-tight">Employa.</h1>
+      <aside className="w-[280px] bg-white border-r border-border flex flex-col hidden md:flex z-20 shadow-sm shrink-0">
+        <div className="h-20 flex items-center px-8 shrink-0">
+          <Image src="/logo.png" alt="Employa Logo" width={32} height={32} className="object-contain mr-3" />
+          <h1 className="text-[24px] font-bold text-black tracking-tight">Employa</h1>
         </div>
         <SidebarNav isAdmin={isAdmin} />
       </aside>
