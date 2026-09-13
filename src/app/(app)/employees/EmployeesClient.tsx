@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Plus, Search, ChevronRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Plus, Search, MoreVertical } from 'lucide-react';
 
 interface Employee {
   id: string;
@@ -16,6 +17,7 @@ interface Employee {
 
 export default function EmployeesClient({ employees }: { employees: Employee[] }) {
   const [search, setSearch] = useState('');
+  const router = useRouter();
 
   const filtered = employees.filter(emp => {
     if (!search) return true;
@@ -29,7 +31,7 @@ export default function EmployeesClient({ employees }: { employees: Employee[] }
   });
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
+    <div className="space-y-6 animate-in fade-in duration-500">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Employee Directory</h1>
@@ -37,15 +39,15 @@ export default function EmployeesClient({ employees }: { employees: Employee[] }
         </div>
         <Link 
           href="/employees/new" 
-          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+          className="flex items-center px-4 py-2 bg-primary text-black rounded-lg hover:bg-primary-hover transition-colors shadow-sm font-bold"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Employee
         </Link>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50/50">
+      <div className="bg-white rounded-[24px] shadow-sm border border-border overflow-hidden p-6">
+        <div className="flex justify-between items-center mb-6">
           <div className="relative w-full max-w-md">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input 
@@ -53,71 +55,83 @@ export default function EmployeesClient({ employees }: { employees: Employee[] }
               placeholder="Search by name, ID, department..." 
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              className="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             />
           </div>
-          <div className="text-sm text-gray-500 ml-4 whitespace-nowrap">
-            {filtered.length} / {employees.length} employees
+          <div className="text-sm font-bold text-gray-400 ml-4 whitespace-nowrap">
+            {filtered.length} / {employees.length} EMPLOYEES
           </div>
         </div>
         
-        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filtered.length === 0 ? (
-            <div className="col-span-full py-12 text-center text-gray-500">
-              {search ? `No employees found matching "${search}".` : 'No employees found. Add one to get started.'}
-            </div>
-          ) : (
-            filtered.map((emp) => {
-              const status = emp.todayStatus || 'unknown';
-
-              return (
-                <Link 
-                  href={`/profile/${emp.id}`} 
-                  key={emp.id}
-                  className="bg-white rounded-2xl border border-gray-100 p-6 flex flex-col items-center shadow-[0_2px_10px_-3px_rgba(6,81,237,0.05)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 group relative cursor-pointer overflow-hidden"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-b from-indigo-50/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                  
-                  {/* Status Indicator */}
-                  <div className="absolute top-4 right-4 z-10" title={`Status: ${status}`}>
-                    {(status === 'Present' || status === 'Half-day') && (
-                      <div className="relative flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+              <tr>
+                <th className="pb-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">Employee</th>
+                <th className="pb-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">ID</th>
+                <th className="pb-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100">Department</th>
+                <th className="pb-4 text-[10px] font-bold text-gray-400 uppercase tracking-wider border-b border-gray-100 text-right pr-4">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="py-12 text-center text-gray-400 font-medium">
+                    {search ? `No employees found matching "${search}".` : 'No employees found. Add one to get started.'}
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((emp) => (
+                  <tr 
+                    key={emp.id}
+                    onClick={() => router.push(`/profile/${emp.id}`)}
+                    className="group cursor-pointer hover:bg-[#FFF9E8]/50 transition-colors border-b border-gray-50 last:border-0"
+                  >
+                    <td className="py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-black font-bold text-sm shrink-0 overflow-hidden">
+                          {emp.profilePicture ? (
+                            <img src={emp.profilePicture} alt={emp.name} className="w-full h-full object-cover" />
+                          ) : (
+                            emp.name.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <div>
+                          <h4 className="text-[14px] font-bold text-gray-900 group-hover:text-black transition-colors">{emp.name}</h4>
+                          <p className="text-[12px] font-medium text-gray-400">{emp.jobTitle || 'Employee'}</p>
+                        </div>
                       </div>
-                    )}
-                    {status === 'Leave' && <span className="text-[14px] leading-none grayscale opacity-80">✈️</span>}
-                    {status === 'Absent' && <span className="inline-flex rounded-full h-3 w-3 bg-red-400"></span>}
-                    {status === 'unknown' && <span className="inline-flex rounded-full h-3 w-3 bg-gray-300"></span>}
-                  </div>
-
-                  {/* Profile Picture */}
-                  <div className="h-24 w-24 rounded-full bg-gradient-to-br from-indigo-100 to-purple-100 flex items-center justify-center text-indigo-700 font-bold text-3xl mb-5 group-hover:scale-105 transition-transform duration-300 overflow-hidden shadow-sm relative z-10 border-4 border-white">
-                    {emp.profilePicture ? (
-                      <img src={emp.profilePicture} alt={emp.name} className="h-full w-full object-cover" />
-                    ) : (
-                      emp.name.charAt(0).toUpperCase()
-                    )}
-                  </div>
-                  
-                  {/* Basic Info */}
-                  <h3 className="text-lg font-bold text-gray-900 text-center tracking-tight group-hover:text-indigo-600 transition-colors relative z-10">{emp.name}</h3>
-                  <p className="text-sm font-medium text-gray-500 mb-1 relative z-10">{emp.jobTitle || 'Employee'}</p>
-                  <p className="text-xs text-gray-400 mb-4 relative z-10">{emp.department || 'Employa HR'}</p>
-                  
-                  <div className="mt-auto pt-4 border-t border-gray-100 w-full flex justify-between items-center relative z-10">
-                    <div className="text-left">
-                      <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">ID</p>
-                      <p className="text-sm font-mono font-medium text-gray-700">{emp.loginId}</p>
-                    </div>
-                    <div className="h-8 w-8 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors text-indigo-300">
-                      <ChevronRight className="w-4 h-4" />
-                    </div>
-                  </div>
-                </Link>
-              );
-            })
-          )}
+                    </td>
+                    <td className="py-4">
+                      <span className="text-[11px] font-mono font-bold text-gray-400 uppercase tracking-wider">
+                        {emp.loginId}
+                      </span>
+                    </td>
+                    <td className="py-4">
+                      {emp.department ? (
+                        <span className="inline-block bg-gray-100 text-gray-700 font-bold uppercase text-[10px] px-3 py-1 rounded-full">
+                          {emp.department}
+                        </span>
+                      ) : (
+                        <span className="text-gray-300 text-xs">-</span>
+                      )}
+                    </td>
+                    <td className="py-4 text-right pr-4">
+                      <button 
+                        className="p-2 rounded-full hover:bg-gray-200 transition-colors text-gray-400 group-hover:text-gray-900"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Action menu logic would go here
+                        }}
+                      >
+                        <MoreVertical className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

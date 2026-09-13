@@ -11,11 +11,6 @@ export default async function EmployeeProfilePage({ params }: { params: Promise<
 
   const { id } = await params;
 
-  // Employees can only view their own profile via /profile (redirect to it)
-  if (session.role !== 'ADMIN' && session.id !== id) {
-    redirect('/profile');
-  }
-
   const user = await prisma.user.findUnique({
     where: { id },
     include: {
@@ -30,16 +25,12 @@ export default async function EmployeeProfilePage({ params }: { params: Promise<
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 ease-out">
       <div className="flex items-center gap-4">
-        <Link href="/employees" className="flex items-center text-sm font-medium text-gray-500 hover:text-indigo-600 transition-colors">
+        <Link href="/employees" className="flex items-center text-sm font-medium text-gray-500 hover:text-primary transition-colors">
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back to Directory
         </Link>
       </div>
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-        <p className="text-gray-500">{user.jobTitle} • {user.department}</p>
-      </div>
-      
+
       <ProfileForm user={user} isAdmin={isAdmin} leaveBalance={user.leaveBalance} isOwnProfile={session.id === user.id} />
     </div>
   );
